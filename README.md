@@ -11,6 +11,8 @@ A RESTful API with token-based authentication for Coffee List application.
 
 The `.htaccess` file contains rooting and basic configuration for Apache server.
 
+**Note:** *The `php_flag display_errors` on should be removed from the `.htaccess` file before installing to server.*
+
 ## Use cases
 
 Basic use case of using API for **creating an account**, **log in** and **log out**.
