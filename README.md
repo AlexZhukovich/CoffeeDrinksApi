@@ -23,12 +23,12 @@ Basic use case of using API for **creating an account**, **log in** and **log ou
 ## Routes
 
 * **/v1/users/**
-  * `POST` Create a new user account ([see requirements](#create_user_account)).
+  * **<code>POST</code>** Create a new user account ([see requirements](#create_user_account)).
 * **/v1/sessions/** 
-  * `POST` Log in (Create a new user session) ([see requirements](#create_user_session)).
+  * **<code>POST</code>** Log in (Create a new user session) ([see requirements](#create_user_session)).
 * **/v1/sessions/SESSION_ID**
-  * `PATCH` Refresh access and refresh tokens, based on `SESSION_ID`. ([see requirements](#refresh-tokens)).
-  * `DELETE` Log out (Delete existing session) ([see requirements](#delete_existing_session)).
+  * **<code>PATCH</code>** Refresh access and refresh tokens, based on `SESSION_ID`. ([see requirements](#refresh-tokens)).
+  * **<code>DELETE</code>** Log out (Delete existing session) ([see requirements](#delete_existing_session)).
 
 ## Request requirements
 
