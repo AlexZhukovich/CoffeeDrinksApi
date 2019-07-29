@@ -1,0 +1,11 @@
+php_flag display_errors on
+SetEnvIf Authorization .+ HTTP_AUTHORIZATION=$0
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+
+RewriteRule ^users$ controller/UserController.php [L]
+
+RewriteRule ^sessions/([0-9]+)$ controller/SessionController.php?sessionid=$1 [L]
+RewriteRule ^sessions$ controller/SessionController.php [L]
