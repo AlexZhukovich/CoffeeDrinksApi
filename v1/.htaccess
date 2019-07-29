@@ -6,3 +6,6 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 
 RewriteRule ^users$ controller/UserController.php [L]
+
+RewriteRule ^sessions/([0-9]+)$ controller/SessionController.php?sessionid=$1 [L]
+RewriteRule ^sessions$ controller/SessionController.php [L]
