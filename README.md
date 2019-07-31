@@ -1,6 +1,6 @@
-# Coffee List RESTful API
+# Coffee Drinks RESTful API
 
-A RESTful API with token-based authentication for Coffee List application.
+A RESTful API with token-based authentication for Coffee Drinks application.
 
 ## Technologies and tools
 
