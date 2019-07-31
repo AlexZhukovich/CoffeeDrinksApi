@@ -5,9 +5,9 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 
-RewriteRule ^coffees/([0-9]+)$ controller/CoffeeController.php?coffeeid=$1 [L]
-RewriteRule ^coffees/page/([0-9]+)$ controller/CoffeeController.php?page=$1 [L]
-RewriteRule ^coffees$ controller/CoffeeController.php [L]
+RewriteRule ^coffee-drinks/([0-9]+)$ controller/CoffeeController.php?coffeeid=$1 [L]
+RewriteRule ^coffee-drinks/page/([0-9]+)$ controller/CoffeeController.php?page=$1 [L]
+RewriteRule ^coffee-drinks$ controller/CoffeeController.php [L]
 
 RewriteRule ^users$ controller/UserController.php [L]
 

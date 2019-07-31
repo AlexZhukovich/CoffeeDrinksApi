@@ -127,7 +127,7 @@
 
                 $returnData = array();
                 $returnData['rows_returned'] = $rowCount;
-                $returnData['coffees'] = $coffeeArray;
+                $returnData['coffee-drinks'] = $coffeeArray;
 
                 $response = new Response();
                 $response->setHttpStatusCode(200);
@@ -183,7 +183,7 @@
                     $response = new Response();
                     $response->setHttpStatusCode(400);
                     $response->setSuccess(false);
-                    $response->addMessage("No coffees favourite field provided");
+                    $response->addMessage("No coffee favourite field provided");
                     $response->send(); 
                     exit;
                 }
@@ -275,7 +275,7 @@
 
                 $returnData = array();
                 $returnData['rows_returned'] = $rowCount;
-                $returnData['coffees'] = $coffeeArray;
+                $returnData['coffee-drinks'] = $coffeeArray;
 
                 $response = new Response();
                 $response->setHttpStatusCode(200);
@@ -324,12 +324,12 @@
             $limitPerPage = ServerConfig::ITEMS_ON_PAGE;
 
             try {
-                $query = $db->prepare('SELECT count(id) as totalNoOfCoffees FROM coffees');
+                $query = $db->prepare('SELECT count(id) as totalNoOfCoffeeDrinks FROM coffees');
                 $query->execute();
 
                 $row = $query->fetch(PDO::FETCH_ASSOC);
-                $coffeesCount = intval($row['totalNoOfCoffees']);
-                $numOfPages = ceil($coffeesCount / $limitPerPage);
+                $coffeeDrinksCount = intval($row['totalNoOfCoffeeDrinks']);
+                $numOfPages = ceil($coffeeDrinksCount / $limitPerPage);
                 if ($numOfPages == 0) {
                     $numOfPages = 1;
                 }
@@ -362,11 +362,11 @@
 
                 $returnData = array();
                 $returnData['row_returned'] = $rowCount;
-                $returnData['total_rows'] = $coffeesCount;
+                $returnData['total_rows'] = $coffeeDrinksCount;
                 $returnData['total_pages'] = $numOfPages;
                 $returnData['has_next_page'] = $page < $numOfPages ? true : false;
                 $returnData['has_previous_page'] = $page > 1 ? true : false;
-                $returnData['coffees'] = $coffeeArray;
+                $returnData['coffee-drinks'] = $coffeeArray;
                 $response = new Response();
                 $response->setHttpStatusCode(200);
                 $response->setSuccess(true);
@@ -386,7 +386,7 @@
                 $response = new Response();
                 $response->setHttpStatusCode(500);
                 $response->setSuccess(false);
-                $response->addMessage("Failed to get coffees");
+                $response->addMessage("Failed to get coffee drinks");
                 $response->send(); 
                 exit;
             }
@@ -398,7 +398,7 @@
             $response->send();
             exit;
         }
-    /* /coffees */    
+    /* /coffee drinks */    
     } elseif (empty($_GET)) {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             try {
@@ -417,7 +417,7 @@
 
                 $returnData = array();
                 $returnData['row_returned'] = $rowCount;
-                $returnData['coffees'] = $coffeeArray;
+                $returnData['coffee-drinks'] = $coffeeArray;
 
                 $response = new Response();
                 $response->setHttpStatusCode(200);
@@ -438,7 +438,7 @@
                 $response = new Response();
                 $response->setHttpStatusCode(500);
                 $response->setSuccess(false);
-                $response->addMessage("Failed to get coffees");
+                $response->addMessage("Failed to get coffee drinks");
                 $response->send(); 
                 exit;
             }
