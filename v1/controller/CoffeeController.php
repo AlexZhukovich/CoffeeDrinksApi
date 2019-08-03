@@ -31,7 +31,9 @@
 
 
     try {
-        $query = $db->prepare('SELECT userid, accesstokenexpiry, useractive, loginattempts FROM sessions, users WHERE sessions.userid = users.id AND accesstoken = :accesstoken');
+        $query = $db->prepare('SELECT userid, accesstokenexpiry, useractive, loginattempts 
+                               FROM '.DatabaseConfig::SESSIONS_TABLE.', '.DatabaseConfig::USERS_TABLE.' 
+                               WHERE '.DatabaseConfig::SESSIONS_TABLE.'.userid = '.DatabaseConfig::USERS_TABLE.'.id AND accesstoken = :accesstoken');
         $query->bindParam(':accesstoken', $accesstoken, PDO::PARAM_STR);
         $query->execute();
 
@@ -103,8 +105,8 @@
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             try {
                 $query = $db->prepare('SELECT c.id, c.title, c.photourl, c.description, c.ingredients, IFNULL(f.favourite, "N") AS favourite 
-                FROM coffees c 
-                LEFT JOIN favourite_coffee f ON c.id = f.coffeeid AND f.userid = :userId 
+                                       FROM '.DatabaseConfig::COFFEE_DRINKS_TABLE.' c 
+                                       LEFT JOIN '.DatabaseConfig::FAVOURITE_COFFEE_DRINK_TABLE.' f ON c.id = f.coffeeid AND f.userid = :userId 
                 WHERE c.id = :coffeeid');
                 $query->bindParam(':coffeeid', $coffeeid, PDO::PARAM_INT);
                 $query->bindParam(':userId', $returned_userid, PDO::PARAM_INT);
@@ -189,8 +191,8 @@
                 }
 
                 $query = $db->prepare('SELECT c.id, c.title, c.photourl, c.description, c.ingredients, IFNULL(f.favourite, "N") AS favourite 
-                                       FROM coffees c 
-                                       LEFT JOIN favourite_coffee f ON c.id = f.coffeeid AND f.userid = :userId 
+                                       FROM '.DatabaseConfig::COFFEE_DRINKS_TABLE.' c 
+                                       LEFT JOIN '.DatabaseConfig::FAVOURITE_COFFEE_DRINK_TABLE.' f ON c.id = f.coffeeid AND f.userid = :userId 
                                        WHERE c.id = :coffeeid');
                 $query->bindParam(':coffeeid', $coffeeid, PDO::PARAM_INT);
                 $query->bindParam(':userId', $returned_userid, PDO::PARAM_INT);
@@ -219,7 +221,9 @@
 
                 $coffee->setFavourite($jsonData->favourite);
 
-                $query = $db->prepare('SELECT id, userid, coffeeid, favourite FROM favourite_coffee WHERE coffeeid = :coffeeid AND userid = :userid');
+                $query = $db->prepare('SELECT id, userid, coffeeid, favourite 
+                                       FROM '.DatabaseConfig::FAVOURITE_COFFEE_DRINK_TABLE.' 
+                                       WHERE coffeeid = :coffeeid AND userid = :userid');
                 $query->bindParam(':coffeeid', $coffeeid, PDO::PARAM_INT);
                 $query->bindParam(':userid', $returned_userid, PDO::PARAM_INT);
                 $query->execute();
@@ -229,28 +233,32 @@
                     $favourite = $coffee->isFavourite();
                     
                     if ($rowCount === 0) { // insert 
-                        $query = $db->prepare('INSERT INTO favourite_coffee (userid, coffeeid, favourite) VALUES(:userid, :coffeeid, :favourite)');
+                        $query = $db->prepare('INSERT INTO '.DatabaseConfig::FAVOURITE_COFFEE_DRINK_TABLE.' (userid, coffeeid, favourite) 
+                                               VALUES(:userid, :coffeeid, :favourite)');
                         $query->bindParam(':coffeeid', $coffeeid, PDO::PARAM_INT);
                         $query->bindParam(':userid', $returned_userid, PDO::PARAM_INT);
                         $query->bindParam(':favourite', $favourite, PDO::PARAM_STR);
                         $query->execute(); 
                     } else { // update
-                        $query = $db->prepare('UPDATE favourite_coffee SET favourite = :favourite WHERE coffeeid = :coffeeid AND userid = :userid');
+                        $query = $db->prepare('UPDATE '.DatabaseConfig::FAVOURITE_COFFEE_DRINK_TABLE.' 
+                                               SET favourite = :favourite 
+                                               WHERE coffeeid = :coffeeid AND userid = :userid');
                         $query->bindParam(':coffeeid', $coffeeid, PDO::PARAM_INT);
                         $query->bindParam(':userid', $returned_userid, PDO::PARAM_INT);
                         $query->bindParam(':favourite', $favourite, PDO::PARAM_STR);
                         $query->execute();
                     }   
                 } else {
-                    $query = $db->prepare('DELETE FROM favourite_coffee WHERE coffeeid = :coffeeid AND userid = :userid');
+                    $query = $db->prepare('DELETE FROM '.DatabaseConfig::FAVOURITE_COFFEE_DRINK_TABLE.' 
+                                           WHERE coffeeid = :coffeeid AND userid = :userid');
                     $query->bindParam(':coffeeid', $coffeeid, PDO::PARAM_INT);
                     $query->bindParam(':userid', $returned_userid, PDO::PARAM_INT);
                     $query->execute();
                 }
 
                 $query = $db->prepare('SELECT c.id, c.title, c.photourl, c.description, c.ingredients, IFNULL(f.favourite, "N") AS favourite 
-                                       FROM coffees c 
-                                       LEFT JOIN favourite_coffee f ON c.id = f.coffeeid AND f.userid = :userId 
+                                       FROM '.DatabaseConfig::COFFEE_DRINKS_TABLE.' c 
+                                       LEFT JOIN '.DatabaseConfig::FAVOURITE_COFFEE_DRINK_TABLE.' f ON c.id = f.coffeeid AND f.userid = :userId 
                                        WHERE c.id = :coffeeid');
                 $query->bindParam(':coffeeid', $coffeeid, PDO::PARAM_INT);
                 $query->bindParam(':userId', $returned_userid, PDO::PARAM_INT);
@@ -324,7 +332,8 @@
             $limitPerPage = ServerConfig::ITEMS_ON_PAGE;
 
             try {
-                $query = $db->prepare('SELECT count(id) as totalNoOfCoffeeDrinks FROM coffees');
+                $query = $db->prepare('SELECT count(id) as totalNoOfCoffeeDrinks 
+                                       FROM '.DatabaseConfig::COFFEE_DRINKS_TABLE);
                 $query->execute();
 
                 $row = $query->fetch(PDO::FETCH_ASSOC);
@@ -344,10 +353,9 @@
     
                 $offset = ($page == 1 ? 0 : ($limitPerPage * ($page - 1)));
                 $query = $db->prepare('SELECT c.id, c.title, c.photourl, c.description, c.ingredients, IFNULL(f.favourite, "N") AS favourite 
-                FROM coffees c 
-                LEFT JOIN favourite_coffee f ON c.id = f.coffeeid AND f.userid = :userid
-                LIMIT :pglimit OFFSET :offset');
-
+                                       FROM '.DatabaseConfig::COFFEE_DRINKS_TABLE.' c 
+                                       LEFT JOIN '.DatabaseConfig::FAVOURITE_COFFEE_DRINK_TABLE.' f ON c.id = f.coffeeid AND f.userid = :userid
+                                       LIMIT :pglimit OFFSET :offset');
                 $query->bindParam(':userid', $returned_userid, PDO::PARAM_INT);
                 $query->bindParam(':pglimit', $limitPerPage, PDO::PARAM_INT);
                 $query->bindParam(':offset', $offset, PDO::PARAM_INT);
@@ -403,8 +411,8 @@
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             try {
                 $query = $db->prepare('SELECT c.id, c.title, c.photourl, c.description, c.ingredients, IFNULL(f.favourite, "N") AS favourite 
-                                       FROM coffees c 
-                                       LEFT JOIN favourite_coffee f ON c.id = f.coffeeid AND f.userid = :userid');
+                                       FROM '.DatabaseConfig::COFFEE_DRINKS_TABLE.' c 
+                                       LEFT JOIN '.DatabaseConfig::FAVOURITE_COFFEE_DRINK_TABLE.' f ON c.id = f.coffeeid AND f.userid = :userid');
                 $query->bindParam(':userid', $returned_userid, PDO::PARAM_INT);
                 $query->execute();
 
