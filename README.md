@@ -24,8 +24,9 @@ Basic use case of using API for **creating an account**, **log in**, **get coffe
 5. [Log Out](#delete_existing_session)
 
 Additional features:
-1. [Get coffee drinks by page number](#get_coffee_drinks_by_page_number)
-2. [Get coffee drink by ID](#get_coffee_drink_by_id)
+1. [Refresh access and refresh tokens](#refresh-tokens)
+2. [Get coffee drinks by page number](#get_coffee_drinks_by_page_number)
+3. [Get coffee drink by ID](#get_coffee_drink_by_id)
 
 ## Routes
 
