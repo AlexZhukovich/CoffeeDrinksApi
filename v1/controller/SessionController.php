@@ -41,7 +41,8 @@
 
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
             try{
-                $query = $db->prepare('DELETE FROM sessions WHERE id = :sessionid AND accesstoken = :accesstoken');
+                $query = $db->prepare('DELETE FROM '.DatabaseConfig::SESSIONS_TABLE.' 
+                                       WHERE id = :sessionid AND accesstoken = :accesstoken');
                 $query->bindParam(':sessionid', $sessionid, PDO::PARAM_INT);
                 $query->bindParam(':accesstoken', $accesstoken, PDO::PARAM_STR);
                 $query->execute();
@@ -108,7 +109,9 @@
 
             try {
                 $refreshtoken = $jsonData->refresh_token;
-                $query = $db->prepare('SELECT sessions.id as sessionid, sessions.userid as userid, accesstoken, refreshtoken, useractive, loginattempts, accesstokenexpiry, refreshtokenexpiry FROM sessions, users WHERE users.id = sessions.userid AND sessions.id = :sessionid AND sessions.accesstoken = :accesstoken AND sessions.refreshtoken = :refreshtoken');
+                $query = $db->prepare('SELECT '.DatabaseConfig::SESSIONS_TABLE.'.id as sessionid, '.DatabaseConfig::SESSIONS_TABLE.'.userid as userid, accesstoken, refreshtoken, useractive, loginattempts, accesstokenexpiry, refreshtokenexpiry 
+                                       FROM '.DatabaseConfig::SESSIONS_TABLE.', '.DatabaseConfig::USERS_TABLE.' 
+                                       WHERE '.DatabaseConfig::USERS_TABLE.'.id = '.DatabaseConfig::SESSIONS_TABLE.'.userid AND '.DatabaseConfig::SESSIONS_TABLE.'.id = :sessionid AND '.DatabaseConfig::SESSIONS_TABLE.'.accesstoken = :accesstoken AND '.DatabaseConfig::SESSIONS_TABLE.'.refreshtoken = :refreshtoken');
                 $query->bindParam(':sessionid', $sessionid, PDO::PARAM_INT);
                 $query->bindParam(':accesstoken', $accesstoken, PDO::PARAM_STR);
                 $query->bindParam(':refreshtoken', $refreshtoken, PDO::PARAM_STR);
@@ -167,7 +170,9 @@
                 $access_token_expiry_seconds = 1200;
                 $refresh_token_expiry_seconds = 1209600;
 
-                $query = $db->prepare('UPDATE sessions SET accesstoken = :accesstoken, accesstokenexpiry = date_add(NOW(), INTERVAL :accesstokenexpiryseconds SECOND), refreshtoken = :refreshtoken, refreshtokenexpiry = date_add(NOW(), INTERVAL :refreshtokenexpiryseconds SECOND) WHERE id = :sessionid AND userid = :userid AND accesstoken = :currentaccesstoken AND refreshtoken = :currentrefreshtoken');
+                $query = $db->prepare('UPDATE '.DatabaseConfig::SESSIONS_TABLE.' 
+                                       SET accesstoken = :accesstoken, accesstokenexpiry = date_add(NOW(), INTERVAL :accesstokenexpiryseconds SECOND), refreshtoken = :refreshtoken, refreshtokenexpiry = date_add(NOW(), INTERVAL :refreshtokenexpiryseconds SECOND) 
+                                       WHERE id = :sessionid AND userid = :userid AND accesstoken = :currentaccesstoken AND refreshtoken = :currentrefreshtoken');
                 $query->bindParam(':userid', $returned_userid, PDO::PARAM_INT);
                 $query->bindParam(':sessionid', $returned_sessionid, PDO::PARAM_INT);
                 $query->bindParam(':accesstoken', $accesstoken, PDO::PARAM_STR);
@@ -346,11 +351,14 @@
         try {
             $db->beginTransaction();
 
-            $query= $db->prepare('UPDATE users SET loginattempts = 0 WHERE id = :id');
+            $query= $db->prepare('UPDATE '.DatabaseConfig::USERS_TABLE.' 
+                                  SET loginattempts = 0 
+                                  WHERE id = :id');
             $query->bindParam(':id', $returned_id, PDO::PARAM_INT);
             $query->execute();
 
-            $query = $db->prepare('INSERT INTO sessions (userid, accesstoken, accesstokenexpiry, refreshtoken, refreshtokenexpiry) VALUES (:userid, :accesstoken, date_add(NOW(), INTERVAL :accesstokenexpiryseconds SECOND), :refreshtoken, date_add(NOW(), INTERVAL :refreshtokenexpiryseconds SECOND))');
+            $query = $db->prepare('INSERT INTO '.DatabaseConfig::SESSIONS_TABLE.' (userid, accesstoken, accesstokenexpiry, refreshtoken, refreshtokenexpiry) 
+                                   VALUES (:userid, :accesstoken, date_add(NOW(), INTERVAL :accesstokenexpiryseconds SECOND), :refreshtoken, date_add(NOW(), INTERVAL :refreshtokenexpiryseconds SECOND))');
             $query->bindParam(':userid', $returned_id, PDO::PARAM_INT);
             $query->bindParam(':accesstoken', $accesstoken, PDO::PARAM_STR);
             $query->bindParam(':accesstokenexpiryseconds', $accesstokenexpiryseconds, PDO::PARAM_INT);

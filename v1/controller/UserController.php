@@ -84,7 +84,9 @@
     try {
         
         // check if email already exist
-        $query = $db->prepare('SELECT id FROM users WHERE email = :email');
+        $query = $db->prepare('SELECT id 
+                               FROM '.DatabaseConfig::USERS_TABLE.' 
+                               WHERE email = :email');
         $query->bindParam(':email', $email, PDO::PARAM_STR);
         $query->execute();
 
@@ -100,7 +102,8 @@
 
         // create a new user account
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $query = $db->prepare('INSERT INTO users (fullname, email, password) VALUES (:fullname, :email, :password)');
+        $query = $db->prepare('INSERT INTO '.DatabaseConfig::USERS_TABLE.' (fullname, email, password) 
+                               VALUES (:fullname, :email, :password)');
         $query->bindParam(':fullname', $fullname, PDO::PARAM_STR);
         $query->bindParam(':email', $email, PDO::PARAM_STR);
         $query->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
