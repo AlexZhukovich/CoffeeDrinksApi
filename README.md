@@ -207,7 +207,7 @@ The request contains user data: `ACCESS_TOKEN`.
 | Method | **<code>PATCH</code>**              |
 | URL    | /coffee-drinks-api/v1/coffee-drinks |
 | Header | Content-Type : application/json<br>Authorization : `ACCESS_TOKEN` |
-| Body   | {<br>&nbsp;&nbsp;&nbsp;&nbsp;"favourite":`"N | Y"` &nbsp;&nbsp;&nbsp;&nbsp;// `Y` - favourite, `N` - not favourite<br>} |
+| Body   | {<br>&nbsp;&nbsp;&nbsp;&nbsp;"favourite":"N *or* Y" &nbsp;&nbsp;&nbsp;&nbsp;// `Y` - favourite, `N` - not favourite<br>} |
 
 The request contains user data: `ACCESS_TOKEN` and `FAVOURITE_VALUE (Y|N)`.
 
