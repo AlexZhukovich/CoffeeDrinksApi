@@ -70,6 +70,34 @@
 			"response": []
 		},
 		{
+			"name": "Log Out (Remove a session)",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "ACCESS_TOKEN",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost/coffee-drinks-rest-api/v1/sessions/SESSION_ID",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"coffee-drinks-rest-api",
+						"v1",
+						"sessions",
+						"SESSION_ID"
+					]
+				},
+				"description": "It allows you to log out or remove a session for a User.\n\nWhat's to update in this request:\n* `SESSION_ID` in URL\n* `ACCESS_TOKEN` in Header"
+			},
+			"response": []
+		},
+		{
 			"name": "Refresh an acess token",
 			"request": {
 				"method": "PATCH",
