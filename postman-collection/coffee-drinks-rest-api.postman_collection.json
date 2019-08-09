@@ -38,6 +38,32 @@
 			"response": []
 		},
 		{
+			"name": "Get current user",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "ACCESS_TOKEN",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost/coffee-drinks-rest-api/v1/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"coffee-drinks-rest-api",
+						"v1",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Log In (Create a session)",
 			"request": {
 				"method": "POST",
