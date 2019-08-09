@@ -91,7 +91,7 @@ The request contains user data: `FULL_NAME`, `USER_NAME` and `PASSWORD`.
 | URL    | /coffee-drinks-api/v1/users    |
 | Header | Authorization : `ACCESS_TOKEN` |
 
-The request contains user data: `FULL_NAME`, `USER_NAME` and `PASSWORD`.
+The request contains user data: `ACCESS_TOKEN`.
 
 **Response**:
 ```
