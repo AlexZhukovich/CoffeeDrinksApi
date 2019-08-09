@@ -27,11 +27,13 @@ Additional features:
 1. [Refresh access and refresh tokens](#refresh-tokens)
 2. [Get coffee drinks by page number](#get_coffee_drinks_by_page_number)
 3. [Get coffee drink by ID](#get_coffee_drink_by_id)
+4. [Get current user info](#get_current_user_info)
 
 ## Routes
 
 * **/v1/users**
   * **<code>POST</code>** Create a new user account ([see requirements](#create_user_account)).
+  * **<code>POST</code>** Get current user ([see requirements](#get_current_user_info)).
 * **/v1/sessions** 
   * **<code>POST</code>** Log in (Create a new user session) ([see requirements](#create_user_session)).
 * **/v1/sessions/`SESSION_ID`**
@@ -71,6 +73,32 @@ The request contains user data: `FULL_NAME`, `USER_NAME` and `PASSWORD`.
     "messages": [
         "User created"
     ],
+    "data": {
+        "user_id": "ID",
+        "fullname": "FULL_NAME",
+        "email": "EMAIL"
+    }
+}
+```
+
+### <a name="get_current_user_info">Get current user info
+
+**Request:**
+
+| Label  | Value                          |
+| ------ |------------------------------- |
+| Method | **<code>GET</code>**           |
+| URL    | /coffee-drinks-api/v1/users    |
+| Header | Authorization : `ACCESS_TOKEN` |
+
+The request contains user data: `FULL_NAME`, `USER_NAME` and `PASSWORD`.
+
+**Response**:
+```
+{
+    "statusCode": 200,
+    "success": true,
+    "messages": [],
     "data": {
         "user_id": "ID",
         "fullname": "FULL_NAME",
