@@ -355,6 +355,7 @@
                 $query = $db->prepare('SELECT c.id, c.title, c.photourl, c.description, c.ingredients, IFNULL(f.favourite, "N") AS favourite 
                                        FROM '.DatabaseConfig::COFFEE_DRINKS_TABLE.' c 
                                        LEFT JOIN '.DatabaseConfig::FAVOURITE_COFFEE_DRINK_TABLE.' f ON c.id = f.coffeeid AND f.userid = :userid
+                                       ORDER BY f.favourite DESC, c.title ASC 
                                        LIMIT :pglimit OFFSET :offset');
                 $query->bindParam(':userid', $returned_userid, PDO::PARAM_INT);
                 $query->bindParam(':pglimit', $limitPerPage, PDO::PARAM_INT);
@@ -412,7 +413,8 @@
             try {
                 $query = $db->prepare('SELECT c.id, c.title, c.photourl, c.description, c.ingredients, IFNULL(f.favourite, "N") AS favourite 
                                        FROM '.DatabaseConfig::COFFEE_DRINKS_TABLE.' c 
-                                       LEFT JOIN '.DatabaseConfig::FAVOURITE_COFFEE_DRINK_TABLE.' f ON c.id = f.coffeeid AND f.userid = :userid');
+                                       LEFT JOIN '.DatabaseConfig::FAVOURITE_COFFEE_DRINK_TABLE.' f ON c.id = f.coffeeid AND f.userid = :userid
+                                       ORDER BY f.favourite DESC, c.title ASC');
                 $query->bindParam(':userid', $returned_userid, PDO::PARAM_INT);
                 $query->execute();
 
