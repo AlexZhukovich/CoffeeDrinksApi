@@ -43,4 +43,5 @@ dependencies {
     implementation "mysql:mysql-connector-java:$mysql_version"
 
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
+    testImplementation "io.mockk:mockk:$mockk_version"
 }
