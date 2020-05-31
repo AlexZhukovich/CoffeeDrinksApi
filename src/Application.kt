@@ -1,7 +1,9 @@
 package com.alexzh.coffeedrinks.api
 
 import com.alexzh.coffeedrinks.api.api.coffeeDrinks
-import com.alexzh.coffeedrinks.api.data.database.DatabaseFactory
+import com.alexzh.coffeedrinks.api.data.database.DatabaseConnector
+import com.alexzh.coffeedrinks.api.data.database.MySQLDatabaseConnector
+import com.alexzh.coffeedrinks.api.data.repository.CoffeeDrinkRepository
 import com.alexzh.coffeedrinks.api.data.repository.MySQLCoffeeDrinkRepository
 import io.ktor.application.Application
 import io.ktor.application.call
@@ -25,6 +27,20 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @JvmOverloads
 @KtorExperimentalLocationsAPI
 fun Application.module(testing: Boolean = false) {
+    val databaseConnector = MySQLDatabaseConnector()
+    val repository = MySQLCoffeeDrinkRepository()
+
+    moduleWithDependencies(
+        databaseConnector,
+        repository
+    )
+}
+
+@KtorExperimentalLocationsAPI
+fun Application.moduleWithDependencies(
+    databaseConnector: DatabaseConnector,
+    coffeeDrinkRepository: CoffeeDrinkRepository
+) {
     install(DefaultHeaders)
     install(StatusPages) {
         exception<Throwable> { ex ->
@@ -40,10 +56,9 @@ fun Application.module(testing: Boolean = false) {
     }
     install(Locations)
 
-    DatabaseFactory.init()
-    val repository = MySQLCoffeeDrinkRepository()
+    databaseConnector.connect()
 
     routing {
-        coffeeDrinks(repository)
+        coffeeDrinks(coffeeDrinkRepository)
     }
 }

@@ -7,10 +7,10 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 
-object DatabaseFactory {
+class MySQLDatabaseConnector : DatabaseConnector {
 
-    fun init() {
-        Database.connect(hikari())
+    override fun connect(): Database {
+        return Database.connect(hikari())
     }
 
     private fun hikari(): HikariDataSource {
@@ -25,11 +25,5 @@ object DatabaseFactory {
         }
         config.validate()
         return HikariDataSource(config)
-    }
-
-    suspend fun <T> dbQuery(
-        block: () -> T
-    ) : T = withContext(Dispatchers.IO) {
-        transaction { block() }
     }
 }

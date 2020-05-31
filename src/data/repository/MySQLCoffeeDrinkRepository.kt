@@ -1,6 +1,5 @@
 package com.alexzh.coffeedrinks.api.data.repository
 
-import com.alexzh.coffeedrinks.api.data.database.DatabaseFactory.dbQuery
 import com.alexzh.coffeedrinks.api.data.model.CoffeeDrink
 import com.alexzh.coffeedrinks.api.data.model.CoffeeDrinkTable
 import org.jetbrains.exposed.sql.ResultRow

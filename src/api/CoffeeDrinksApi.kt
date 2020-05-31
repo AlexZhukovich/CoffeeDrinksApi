@@ -3,6 +3,7 @@ package com.alexzh.coffeedrinks.api.api
 import com.alexzh.coffeedrinks.api.API_VERSION
 import com.alexzh.coffeedrinks.api.data.repository.CoffeeDrinkRepository
 import io.ktor.application.call
+import io.ktor.http.HttpStatusCode
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Location
 import io.ktor.locations.get
@@ -34,7 +35,8 @@ fun Route.coffeeDrinks(
         val coffeeDrink = coffeeDrinkRepository.getCoffeeDrinkById(coffeeDrinkById.id)
         if (coffeeDrink != null) {
             call.respond(coffeeDrink)
+        } else {
+            call.respond(HttpStatusCode.NoContent)
         }
-        // TODO: improve behaviour
     }
 }
