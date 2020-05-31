@@ -1,6 +1,6 @@
-package com.alexzh.coffeedrinks.api.repository
+package com.alexzh.coffeedrinks.api.data.repository
 
-import com.alexzh.coffeedrinks.api.model.CoffeeDrink
+import com.alexzh.coffeedrinks.api.data.model.CoffeeDrink
 
 interface CoffeeDrinkRepository {
 

@@ -1,7 +1,8 @@
 package com.alexzh.coffeedrinks.api
 
 import com.alexzh.coffeedrinks.api.api.coffeeDrinks
-import com.alexzh.coffeedrinks.api.repository.RuntimeCoffeeDrinkRepository
+import com.alexzh.coffeedrinks.api.data.database.DatabaseFactory
+import com.alexzh.coffeedrinks.api.data.repository.MySQLCoffeeDrinkRepository
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -39,7 +40,8 @@ fun Application.module(testing: Boolean = false) {
     }
     install(Locations)
 
-    val repository = RuntimeCoffeeDrinkRepository()
+    DatabaseFactory.init()
+    val repository = MySQLCoffeeDrinkRepository()
 
     routing {
         coffeeDrinks(repository)
