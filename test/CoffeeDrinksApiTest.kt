@@ -3,6 +3,7 @@ package com.alexzh.coffeedrinks.api
 import com.alexzh.coffeedrinks.api.data.database.DatabaseConnector
 import com.alexzh.coffeedrinks.api.data.model.CoffeeDrink
 import com.alexzh.coffeedrinks.api.data.repository.CoffeeDrinkRepository
+import com.alexzh.coffeedrinks.api.data.repository.UserRepository
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.ktor.http.HttpMethod
@@ -17,9 +18,9 @@ import kotlin.test.assertEquals
 
 @KtorExperimentalLocationsAPI
 class CoffeeDrinksApiTest {
-
     private val databaseConnector = mockk<DatabaseConnector>(relaxed = true)
     private val coffeeDrinkRepository = mockk<CoffeeDrinkRepository>()
+    private val userRepository = mockk<UserRepository>()
 
     @Test
     fun `should return 2 coffee drinks when coffee-drinks request executed`() {
@@ -29,7 +30,13 @@ class CoffeeDrinksApiTest {
         )
         stubGetCoffeeDrinks(coffeeDrinks)
 
-        withTestApplication({ moduleWithDependencies(databaseConnector, coffeeDrinkRepository) }) {
+        withTestApplication({
+            moduleWithDependencies(
+                    databaseConnector,
+                    coffeeDrinkRepository,
+                    userRepository
+            )
+        }) {
             handleRequest(HttpMethod.Get, "/api/v1/coffee-drinks").apply {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertEquals(coffeeDrinks, Gson().fromJson(response.content, object : TypeToken<List<CoffeeDrink>>() {}.type) )
@@ -42,7 +49,13 @@ class CoffeeDrinksApiTest {
         val coffeeDrinks = emptyList<CoffeeDrink>()
         stubGetCoffeeDrinks(coffeeDrinks)
 
-        withTestApplication({ moduleWithDependencies(databaseConnector, coffeeDrinkRepository) }) {
+        withTestApplication({
+            moduleWithDependencies(
+                    databaseConnector,
+                    coffeeDrinkRepository,
+                    userRepository
+            )
+        }) {
             handleRequest(HttpMethod.Get, "/api/v1/coffee-drinks").apply {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertEquals(coffeeDrinks, Gson().fromJson(response.content, object : TypeToken<List<CoffeeDrink>>() {}.type) )
@@ -56,7 +69,13 @@ class CoffeeDrinksApiTest {
         val coffeeDrink = CoffeeDrink(1L, "Coffee 1", "-", "Description 1", "Ingredients 1")
         stubGetCoffeeDrinkById(id, coffeeDrink)
 
-        withTestApplication({ moduleWithDependencies(databaseConnector, coffeeDrinkRepository) }) {
+        withTestApplication({
+            moduleWithDependencies(
+                    databaseConnector,
+                    coffeeDrinkRepository,
+                    userRepository
+            )
+        }) {
             handleRequest(HttpMethod.Get, "/api/v1/coffee-drinks/$id").apply {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertEquals(coffeeDrink, Gson().fromJson(response.content, CoffeeDrink::class.java) )
@@ -69,7 +88,13 @@ class CoffeeDrinksApiTest {
         val id = -1L
         stubGetCoffeeDrinkById(id, null)
 
-        withTestApplication({ moduleWithDependencies(databaseConnector, coffeeDrinkRepository) }) {
+        withTestApplication({
+            moduleWithDependencies(
+                    databaseConnector,
+                    coffeeDrinkRepository,
+                    userRepository
+            )
+        }) {
             handleRequest(HttpMethod.Get, "/api/v1/coffee-drinks/$id").apply {
                 assertEquals(HttpStatusCode.NoContent, response.status())
             }
