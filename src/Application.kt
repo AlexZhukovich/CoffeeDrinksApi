@@ -1,7 +1,11 @@
 package com.alexzh.coffeedrinks.api
 
+import com.alexzh.coffeedrinks.api.api.AppSession
 import com.alexzh.coffeedrinks.api.api.coffeeDrinks
 import com.alexzh.coffeedrinks.api.api.users
+import com.alexzh.coffeedrinks.api.auth.JwtService
+import com.alexzh.coffeedrinks.api.auth.hash
+import com.alexzh.coffeedrinks.api.auth.hashKey
 import com.alexzh.coffeedrinks.api.data.database.DatabaseConnector
 import com.alexzh.coffeedrinks.api.data.database.MySQLDatabaseConnector
 import com.alexzh.coffeedrinks.api.data.repository.CoffeeDrinkRepository
@@ -12,6 +16,8 @@ import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.auth.Authentication
+import io.ktor.auth.jwt.jwt
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.features.StatusPages
@@ -24,6 +30,10 @@ import io.ktor.locations.locations
 import io.ktor.response.respondRedirect
 import io.ktor.response.respondText
 import io.ktor.routing.routing
+import io.ktor.sessions.SessionTransportTransformerMessageAuthentication
+import io.ktor.sessions.Sessions
+import io.ktor.sessions.cookie
+import io.ktor.util.KtorExperimentalAPI
 
 const val API_VERSION = "/api/v1"
 
@@ -31,16 +41,22 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @Suppress("unused") // Reference in application.conf
 @JvmOverloads
+@KtorExperimentalAPI
 @KtorExperimentalLocationsAPI
 fun Application.module(testing: Boolean = false) {
     val databaseConnector = MySQLDatabaseConnector()
     val coffeeDrinksRepository = MySQLCoffeeDrinkRepository()
     val userRepository = MySQLUserRepository()
+    val jwtService = JwtService()
+
+    val hashFunction = { s: String -> hash(s)}
 
     moduleWithDependencies(
         databaseConnector,
         coffeeDrinksRepository,
-        userRepository
+        userRepository,
+        jwtService,
+        hashFunction
     )
 }
 
@@ -48,7 +64,9 @@ fun Application.module(testing: Boolean = false) {
 fun Application.moduleWithDependencies(
     databaseConnector: DatabaseConnector,
     coffeeDrinkRepository: CoffeeDrinkRepository,
-    userRepository: UserRepository
+    userRepository: UserRepository,
+    jwtService: JwtService,
+    hashFunction: (String) -> String
 ) {
     install(DefaultHeaders)
     install(StatusPages) {
@@ -64,12 +82,30 @@ fun Application.moduleWithDependencies(
         gson()
     }
     install(Locations)
+    install(Authentication) {
+        jwt("jwt") {
+            verifier(jwtService.verifier)
+            realm = "Coffee Drinks server"
+            validate {
+                val payload = it.payload
+                val claim = payload.getClaim("id")
+                val userId = claim.asLong()
+                val user = userRepository.getUserById(userId)
+                user
+            }
+        }
+    }
+    install(Sessions) {
+        cookie<AppSession>("SESSION") {
+            transform(SessionTransportTransformerMessageAuthentication(hashKey))
+        }
+    }
 
     databaseConnector.connect()
 
     routing {
         coffeeDrinks(coffeeDrinkRepository)
-        users(userRepository)
+        users(userRepository, jwtService, hashFunction)
     }
 }
 

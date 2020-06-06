@@ -32,9 +32,12 @@ object UsersApi {
     class UserById(val id: Long)
 }
 
+@KtorExperimentalAPI
 @KtorExperimentalLocationsAPI
 fun Route.users(
-    userRepository: UserRepository
+    userRepository: UserRepository,
+    jwtService: JwtService,
+    hasFunction: (String) -> String
 ) {
     get<UsersApi.AllUsers> {
         call.respond(

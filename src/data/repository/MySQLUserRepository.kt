@@ -1,39 +1,40 @@
 package com.alexzh.coffeedrinks.api.data.repository
 
+import com.alexzh.coffeedrinks.api.data.exception.UserAlreadyExistException
 import com.alexzh.coffeedrinks.api.data.model.User
 import com.alexzh.coffeedrinks.api.data.model.UserTable
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.statements.InsertStatement
 
 class MySQLUserRepository : UserRepository {
 
-    // TODO: should return User
-    override suspend fun createUser(user: User) {
-        transaction {
-            val statement = UserTable.insert {
+    override suspend fun createUser(user: User): User? {
+        if (getUserByEmail(user.email) != null) {
+            throw UserAlreadyExistException()
+        }
+
+        var statement: InsertStatement<Number>? = null
+        dbQuery {
+            statement = UserTable.insert {
                 it[name] = user.name
                 it[email] = user.email
                 it[passwordHash] = user.passwordHash
             }
         }
-    }
-
-    override suspend fun deleteUser(id: Long): Boolean {
-        return UserTable.deleteWhere { UserTable.id eq id } > 0
-    }
-
-    // TODO: should return User
-    override suspend fun updateUser(user: User): Boolean {
-        return UserTable.update({ UserTable.id eq user.id}) {
-            it[name] = user.name
-            it[email] = user.email
-            it[passwordHash] = user.passwordHash
-        } > 0
+        return statement?.resultedValues?.first()?.let { toUser(it) }
     }
 
     override suspend fun getUserById(id: Long): User? {
         return dbQuery {
             UserTable.select { UserTable.id eq id }
+                    .mapNotNull { toUser(it) }
+                    .singleOrNull()
+        }
+    }
+
+    override suspend fun getUserByEmail(email: String): User? {
+        return dbQuery {
+            UserTable.select { UserTable.email eq email }
                     .mapNotNull { toUser(it) }
                     .singleOrNull()
         }
