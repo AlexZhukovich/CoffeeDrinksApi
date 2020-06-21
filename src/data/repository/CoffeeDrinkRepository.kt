@@ -6,5 +6,7 @@ interface CoffeeDrinkRepository {
 
     suspend fun getCoffeeDrinks(): List<CoffeeDrink>
 
+    suspend fun getCoffeeDrinksByUser(id: Long): List<CoffeeDrink>
+
     suspend fun getCoffeeDrinkById(id: Long): CoffeeDrink?
 }

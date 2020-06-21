@@ -1,8 +1,12 @@
 package com.alexzh.coffeedrinks.api.api
 
 import com.alexzh.coffeedrinks.api.API_VERSION
+import com.alexzh.coffeedrinks.api.api.mapper.CoffeeDrinkMapper
+import com.alexzh.coffeedrinks.api.data.model.User
 import com.alexzh.coffeedrinks.api.data.repository.CoffeeDrinkRepository
 import io.ktor.application.call
+import io.ktor.auth.authenticate
+import io.ktor.auth.principal
 import io.ktor.http.HttpStatusCode
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Location
@@ -24,13 +28,29 @@ object CoffeeDrinksApi {
 
 @KtorExperimentalLocationsAPI
 fun Route.coffeeDrinks(
-    coffeeDrinkRepository: CoffeeDrinkRepository
+    coffeeDrinkRepository: CoffeeDrinkRepository,
+    mapper: CoffeeDrinkMapper
 ) {
-    get<CoffeeDrinksApi.AllCoffeeDrinks> {
-        call.respond(
-            coffeeDrinkRepository.getCoffeeDrinks()
-        )
+    authenticate("jwt", optional = true) {
+        get<CoffeeDrinksApi.AllCoffeeDrinks> {
+            val user = call.principal<User>()
+
+            // TODO: refactor code
+            if (user == null) {
+                val result = coffeeDrinkRepository.getCoffeeDrinks()
+                call.respond(
+                    result
+                        .map { mapper.mapToCoffeeDrinkWithoutFavourite(it) }
+                )
+            } else {
+                call.respond(
+                    coffeeDrinkRepository.getCoffeeDrinksByUser(user.id)
+                        .map { mapper.mapToCoffeeDrinkWithFavourite(it) }
+                )
+            }
+        }
     }
+
     get<CoffeeDrinksApi.CoffeeDrinkById> { coffeeDrinkById ->
         val coffeeDrink = coffeeDrinkRepository.getCoffeeDrinkById(coffeeDrinkById.id)
         if (coffeeDrink != null) {

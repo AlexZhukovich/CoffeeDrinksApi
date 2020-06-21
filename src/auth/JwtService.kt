@@ -4,11 +4,15 @@ import com.alexzh.coffeedrinks.api.data.model.User
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import io.ktor.application.ApplicationEnvironment
+import io.ktor.config.ApplicationConfig
+import io.ktor.util.KtorExperimentalAPI
 import java.util.*
 
-class JwtService {
+@KtorExperimentalAPI
+class JwtService(apiConfig: ApplicationConfig) {
     private val issuer = "coffeeDrinksServer"
-    private val jwtSecret = System.getenv("JWT_SECRET")
+    private val jwtSecret = apiConfig.property("jwtSecretKey").getString()
     private val algorithm = Algorithm.HMAC512(jwtSecret)
 
     val verifier: JWTVerifier = JWT

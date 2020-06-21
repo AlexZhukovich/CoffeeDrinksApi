@@ -1,8 +1,8 @@
-package com.alexzh.coffeedrinks.api.data.model
+package com.alexzh.coffeedrinks.api.api.model
 
 import java.io.Serializable
 
-data class CoffeeDrink(
+data class CoffeeDrinkWithFavourite(
     val id: Long,
     val name: String,
     val imageUrl: String,

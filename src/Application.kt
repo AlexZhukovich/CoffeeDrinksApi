@@ -2,6 +2,7 @@ package com.alexzh.coffeedrinks.api
 
 import com.alexzh.coffeedrinks.api.api.AppSession
 import com.alexzh.coffeedrinks.api.api.coffeeDrinks
+import com.alexzh.coffeedrinks.api.api.mapper.CoffeeDrinkMapper
 import com.alexzh.coffeedrinks.api.api.users
 import com.alexzh.coffeedrinks.api.auth.JwtService
 import com.alexzh.coffeedrinks.api.auth.hash
@@ -44,27 +45,33 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @KtorExperimentalAPI
 @KtorExperimentalLocationsAPI
 fun Application.module(testing: Boolean = false) {
+    val apiConfig = environment.config.config("api")
+
     val databaseConnector = MySQLDatabaseConnector()
     val coffeeDrinksRepository = MySQLCoffeeDrinkRepository()
     val userRepository = MySQLUserRepository()
-    val jwtService = JwtService()
+    val coffeeDrinkMapper = CoffeeDrinkMapper()
+    val jwtService = JwtService(apiConfig)
 
-    val hashFunction = { s: String -> hash(s)}
+    val hashFunction = { s: String -> hash(environment, s)}
 
     moduleWithDependencies(
         databaseConnector,
         coffeeDrinksRepository,
         userRepository,
+        coffeeDrinkMapper,
         jwtService,
         hashFunction
     )
 }
 
+@KtorExperimentalAPI
 @KtorExperimentalLocationsAPI
 fun Application.moduleWithDependencies(
     databaseConnector: DatabaseConnector,
     coffeeDrinkRepository: CoffeeDrinkRepository,
     userRepository: UserRepository,
+    coffeeDrinkMapper: CoffeeDrinkMapper,
     jwtService: JwtService,
     hashFunction: (String) -> String
 ) {
@@ -97,14 +104,14 @@ fun Application.moduleWithDependencies(
     }
     install(Sessions) {
         cookie<AppSession>("SESSION") {
-            transform(SessionTransportTransformerMessageAuthentication(hashKey))
+            transform(SessionTransportTransformerMessageAuthentication(hashKey(environment)))
         }
     }
 
     databaseConnector.connect()
 
     routing {
-        coffeeDrinks(coffeeDrinkRepository)
+        coffeeDrinks(coffeeDrinkRepository, coffeeDrinkMapper)
         users(userRepository, jwtService, hashFunction)
     }
 }
