@@ -1,14 +1,15 @@
 package com.alexzh.coffeedrinks.api
 
 import com.alexzh.coffeedrinks.api.api.AppSession
-import com.alexzh.coffeedrinks.api.api.coffeeDrinks
-import com.alexzh.coffeedrinks.api.api.mapper.CoffeeDrinkMapper
+import com.alexzh.coffeedrinks.api.api.coffeedrinks.coffeeDrinks
+import api.coffeedrinks.mapper.CoffeeDrinkMapper
 import com.alexzh.coffeedrinks.api.api.users
 import com.alexzh.coffeedrinks.api.auth.JwtService
 import com.alexzh.coffeedrinks.api.auth.hash
 import com.alexzh.coffeedrinks.api.auth.hashKey
 import com.alexzh.coffeedrinks.api.data.database.DatabaseConnector
 import com.alexzh.coffeedrinks.api.data.database.MySQLDatabaseConnector
+import com.alexzh.coffeedrinks.api.data.model.User
 import com.alexzh.coffeedrinks.api.data.repository.CoffeeDrinkRepository
 import com.alexzh.coffeedrinks.api.data.repository.MySQLCoffeeDrinkRepository
 import com.alexzh.coffeedrinks.api.data.repository.MySQLUserRepository
@@ -19,6 +20,7 @@ import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.jwt.jwt
+import io.ktor.auth.principal
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.features.StatusPages
@@ -68,12 +70,12 @@ fun Application.module(testing: Boolean = false) {
 @KtorExperimentalAPI
 @KtorExperimentalLocationsAPI
 fun Application.moduleWithDependencies(
-    databaseConnector: DatabaseConnector,
-    coffeeDrinkRepository: CoffeeDrinkRepository,
-    userRepository: UserRepository,
-    coffeeDrinkMapper: CoffeeDrinkMapper,
-    jwtService: JwtService,
-    hashFunction: (String) -> String
+        databaseConnector: DatabaseConnector,
+        coffeeDrinkRepository: CoffeeDrinkRepository,
+        userRepository: UserRepository,
+        coffeeDrinkMapper: CoffeeDrinkMapper,
+        jwtService: JwtService,
+        hashFunction: (String) -> String
 ) {
     install(DefaultHeaders)
     install(StatusPages) {

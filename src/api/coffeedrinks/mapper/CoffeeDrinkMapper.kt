@@ -1,14 +1,13 @@
-package com.alexzh.coffeedrinks.api.api.mapper
+package api.coffeedrinks.mapper
 
-import com.alexzh.coffeedrinks.api.api.model.CoffeeDrinkWithFavourite
-import com.alexzh.coffeedrinks.api.api.model.CoffeeDrinkWithoutFavourite
+import com.alexzh.coffeedrinks.api.api.coffeedrinks.model.CoffeeDrinkResponse
 import com.alexzh.coffeedrinks.api.data.model.CoffeeDrink
 
 class CoffeeDrinkMapper {
 
     fun mapToCoffeeDrinkWithFavourite(
             coffeeDrink: CoffeeDrink
-    ) = CoffeeDrinkWithFavourite(
+    ) = CoffeeDrinkResponse.CoffeeDrinkWithFavourite(
             coffeeDrink.id,
             coffeeDrink.name,
             coffeeDrink.imageUrl,
@@ -19,7 +18,7 @@ class CoffeeDrinkMapper {
 
     fun mapToCoffeeDrinkWithoutFavourite(
             coffeeDrink: CoffeeDrink
-    ) = CoffeeDrinkWithoutFavourite(
+    ) = CoffeeDrinkResponse.CoffeeDrinkWithoutFavourite(
             coffeeDrink.id,
             coffeeDrink.name,
             coffeeDrink.imageUrl,

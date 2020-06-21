@@ -1,8 +1,7 @@
-package com.alexzh.coffeedrinks.api
+package com.alexzh.coffeedrinks.api.coffeedrinks
 
-import com.alexzh.coffeedrinks.api.api.mapper.CoffeeDrinkMapper
-import com.alexzh.coffeedrinks.api.api.model.CoffeeDrinkWithFavourite
-import com.alexzh.coffeedrinks.api.api.model.CoffeeDrinkWithoutFavourite
+import api.coffeedrinks.mapper.CoffeeDrinkMapper
+import com.alexzh.coffeedrinks.api.api.coffeedrinks.model.CoffeeDrinkResponse
 import com.alexzh.coffeedrinks.api.auth.JwtService
 import com.alexzh.coffeedrinks.api.com.alexzh.coffeedrinks.api.addAuthHeader
 import com.alexzh.coffeedrinks.api.com.alexzh.coffeedrinks.api.launchTestApp
@@ -11,6 +10,9 @@ import com.alexzh.coffeedrinks.api.data.model.CoffeeDrink
 import com.alexzh.coffeedrinks.api.data.model.User
 import com.alexzh.coffeedrinks.api.data.repository.CoffeeDrinkRepository
 import com.alexzh.coffeedrinks.api.data.repository.UserRepository
+import com.alexzh.coffeedrinks.api.generators.CoffeeDrinkGenerator.generateCoffeeDrink
+import com.alexzh.coffeedrinks.api.generators.CoffeeDrinkGenerator.generateCoffeeDrinksByFavourites
+import com.alexzh.coffeedrinks.api.generators.UserGenerator.generateUser
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.ktor.http.HttpMethod
@@ -30,19 +32,15 @@ class CoffeeDrinksApiTest {
     private val userRepository = mockk<UserRepository>()
     private val jwtService = mockk<JwtService>()
 
-    private val coffeeDrinkMapper = CoffeeDrinkMapper()
+    private val mapper = CoffeeDrinkMapper()
 
     @Test
     fun `should return 2 coffee drinks when coffee-drinks request executed and no active user`() {
-        // TODO: use generators for data
-        val coffeeDrinks = listOf(
-            CoffeeDrink(1L, "Coffee 1", "-", "Description 1", "Ingredients 1", true),
-            CoffeeDrink(2L, "Coffee 2", "no", "Description 2", "Ingredients 2", true)
-        )
+        val coffeeDrinks = generateCoffeeDrinksByFavourites(listOf(true, false))
 
         launchTestApp(
             coffeeDrinkRepository = coffeeDrinkRepository,
-            coffeeDrinkMapper = coffeeDrinkMapper
+            coffeeDrinkMapper = mapper
         ) {
             stubGetCoffeeDrinks(coffeeDrinks)
 
@@ -50,8 +48,8 @@ class CoffeeDrinksApiTest {
                 // TODO: use custom assertion
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertEquals(
-                    coffeeDrinks.map { coffeeDrinkMapper.mapToCoffeeDrinkWithoutFavourite(it) },
-                    Gson().fromJson(response.content, object : TypeToken<List<CoffeeDrinkWithoutFavourite>>() {}.type)
+                    coffeeDrinks.map { mapper.mapToCoffeeDrinkWithoutFavourite(it) },
+                    Gson().fromJson(response.content, object : TypeToken<List<CoffeeDrinkResponse.CoffeeDrinkWithoutFavourite>>() {}.type)
                 )
             }
         }
@@ -59,18 +57,14 @@ class CoffeeDrinksApiTest {
 
     @Test
     fun `should return 2 coffee drinks when coffee-drinks request executed with active user`() {
-        // TODO: use generators for data
-        val user = User(42L, "Test User", "test@test.com", "12345")
-        val coffeeDrinks = listOf(
-                CoffeeDrink(1L, "Coffee 1", "-", "Description 1", "Ingredients 1", true),
-                CoffeeDrink(2L, "Coffee 2", "no", "Description 2", "Ingredients 2", true)
-        )
+        val user = generateUser()
+        val coffeeDrinks = generateCoffeeDrinksByFavourites(listOf(true, false))
 
         stubAuthVerifier(jwtService)
 
         launchTestApp(
                 coffeeDrinkRepository = coffeeDrinkRepository,
-                coffeeDrinkMapper = coffeeDrinkMapper,
+                coffeeDrinkMapper = mapper,
                 userRepository = userRepository,
                 jwtService = jwtService
         ) {
@@ -83,8 +77,8 @@ class CoffeeDrinksApiTest {
                 // TODO: use custom assertion
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertEquals(
-                        coffeeDrinks.map { coffeeDrinkMapper.mapToCoffeeDrinkWithFavourite(it) },
-                        Gson().fromJson(response.content, object : TypeToken<List<CoffeeDrinkWithFavourite>>() {}.type)
+                        coffeeDrinks.map { mapper.mapToCoffeeDrinkWithFavourite(it) },
+                        Gson().fromJson(response.content, object : TypeToken<List<CoffeeDrinkResponse.CoffeeDrinkWithFavourite>>() {}.type)
                 )
             }
         }
@@ -96,7 +90,7 @@ class CoffeeDrinksApiTest {
 
         launchTestApp(
             coffeeDrinkRepository = coffeeDrinkRepository,
-            coffeeDrinkMapper = coffeeDrinkMapper
+            coffeeDrinkMapper = mapper
         ) {
             stubGetCoffeeDrinks(coffeeDrinks)
 
@@ -109,21 +103,56 @@ class CoffeeDrinksApiTest {
     }
 
     @Test
-    fun `should return coffee drink by id when coffee-drinks request with id = 42 is executed`() {
-        // TODO: use generators for data
-        val id = 42L
-        val coffeeDrink = CoffeeDrink(1L, "Coffee 1", "-", "Description 1", "Ingredients 1", true)
+    fun `should return coffee drink by id when no active user`() {
+        val coffeeDrink = generateCoffeeDrink()
+        val expectedCoffeeDrinkWithoutFavourite = mapper.mapToCoffeeDrinkWithoutFavourite(coffeeDrink)
 
         launchTestApp(
             coffeeDrinkRepository = coffeeDrinkRepository,
-            coffeeDrinkMapper = coffeeDrinkMapper
+            coffeeDrinkMapper = mapper
         ) {
-            stubGetCoffeeDrinkById(id, coffeeDrink)
+            stubGetCoffeeDrinkById(coffeeDrink.id, coffeeDrink)
 
-            handleRequest(HttpMethod.Get, "/api/v1/coffee-drinks/$id").apply {
+            handleRequest(HttpMethod.Get, "/api/v1/coffee-drinks/${coffeeDrink.id}").apply {
                 // TODO: use custom assertion
                 assertEquals(HttpStatusCode.OK, response.status())
-                assertEquals(coffeeDrink, Gson().fromJson(response.content, CoffeeDrink::class.java) )
+                assertEquals(
+                        expectedCoffeeDrinkWithoutFavourite,
+                        Gson().fromJson(response.content, CoffeeDrinkResponse.CoffeeDrinkWithoutFavourite::class.java)
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `should return coffee drink by id with active user`() {
+        val user = generateUser()
+        val coffeeDrink = generateCoffeeDrink()
+        val expectedCoffeeDrinkWithFavourite = mapper.mapToCoffeeDrinkWithFavourite(coffeeDrink)
+
+        stubAuthVerifier(jwtService)
+
+        launchTestApp(
+                coffeeDrinkRepository = coffeeDrinkRepository,
+                coffeeDrinkMapper = mapper,
+                jwtService = jwtService,
+                userRepository = userRepository
+        ) {
+            stubGetUserById(user.id, user)
+            stubGetCoffeeDrinkById(coffeeDrink.id, coffeeDrink)
+
+            handleRequest(
+                    HttpMethod.Get,
+                    "/api/v1/coffee-drinks/${coffeeDrink.id}"
+            ) {
+                addAuthHeader(this@launchTestApp, user)
+            }.apply {
+                // TODO: use custom assertion
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertEquals(
+                        expectedCoffeeDrinkWithFavourite,
+                        Gson().fromJson(response.content, CoffeeDrinkResponse.CoffeeDrinkWithFavourite::class.java)
+                )
             }
         }
     }
@@ -134,7 +163,7 @@ class CoffeeDrinksApiTest {
 
         launchTestApp(
             coffeeDrinkRepository = coffeeDrinkRepository,
-            coffeeDrinkMapper = coffeeDrinkMapper
+            coffeeDrinkMapper = mapper
         ) {
             stubGetCoffeeDrinkById(id, null)
 
@@ -169,6 +198,6 @@ class CoffeeDrinksApiTest {
         id: Long,
         coffeeDrink: CoffeeDrink? = null
     ) {
-        coEvery { coffeeDrinkRepository.getCoffeeDrinkById(id) }.returns(coffeeDrink)
+        coEvery { coffeeDrinkRepository.getCoffeeDrinkById(id) } returns coffeeDrink
     }
 }

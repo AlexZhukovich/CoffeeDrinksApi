@@ -1,6 +1,6 @@
 package com.alexzh.coffeedrinks.api.com.alexzh.coffeedrinks.api
 
-import com.alexzh.coffeedrinks.api.api.mapper.CoffeeDrinkMapper
+import api.coffeedrinks.mapper.CoffeeDrinkMapper
 import com.alexzh.coffeedrinks.api.auth.JwtService
 import com.alexzh.coffeedrinks.api.data.database.DatabaseConnector
 import com.alexzh.coffeedrinks.api.data.model.User
