@@ -1,4 +1,4 @@
-package com.alexzh.coffeedrinks.api.com.alexzh.coffeedrinks.api
+package com.alexzh.coffeedrinks.api
 
 import api.coffeedrinks.mapper.CoffeeDrinkMapper
 import com.alexzh.coffeedrinks.api.auth.JwtService
@@ -6,7 +6,6 @@ import com.alexzh.coffeedrinks.api.data.database.DatabaseConnector
 import com.alexzh.coffeedrinks.api.data.model.User
 import com.alexzh.coffeedrinks.api.data.repository.CoffeeDrinkRepository
 import com.alexzh.coffeedrinks.api.data.repository.UserRepository
-import com.alexzh.coffeedrinks.api.moduleWithDependencies
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.config.MapApplicationConfig

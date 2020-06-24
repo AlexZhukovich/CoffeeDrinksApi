@@ -1,7 +1,8 @@
 package com.alexzh.coffeedrinks.api.coffeedrinks.mapper
 
 import api.coffeedrinks.mapper.CoffeeDrinkMapper
-import com.alexzh.coffeedrinks.api.api.coffeedrinks.model.CoffeeDrinkResponse
+import com.alexzh.coffeedrinks.api.api.coffeedrinks.model.CoffeeDrinkWithFavourite
+import com.alexzh.coffeedrinks.api.api.coffeedrinks.model.CoffeeDrinkWithoutFavourite
 import com.alexzh.coffeedrinks.api.data.model.CoffeeDrink
 import com.alexzh.coffeedrinks.api.generators.CoffeeDrinkGenerator.generateCoffeeDrink
 import org.junit.Test
@@ -34,7 +35,7 @@ class CoffeeDrinkMapperTest {
 
     private fun assertCoffeeDrinks(
         coffeeDrink: CoffeeDrink,
-        coffeeDrinkWithFavourite: CoffeeDrinkResponse.CoffeeDrinkWithFavourite
+        coffeeDrinkWithFavourite: CoffeeDrinkWithFavourite
     ) {
         assertEquals(coffeeDrink.id, coffeeDrinkWithFavourite.id)
         assertEquals(coffeeDrink.name, coffeeDrinkWithFavourite.name)
@@ -46,7 +47,7 @@ class CoffeeDrinkMapperTest {
 
     private fun assertCoffeeDrinks(
         coffeeDrink: CoffeeDrink,
-        coffeeDrinkWithoutFavourite: CoffeeDrinkResponse.CoffeeDrinkWithoutFavourite
+        coffeeDrinkWithoutFavourite: CoffeeDrinkWithoutFavourite
     ) {
         assertEquals(coffeeDrink.id, coffeeDrinkWithoutFavourite.id)
         assertEquals(coffeeDrink.name, coffeeDrinkWithoutFavourite.name)
