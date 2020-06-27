@@ -1,8 +1,8 @@
 package com.alexzh.coffeedrinks.api.coffeedrinks.mapper
 
 import api.coffeedrinks.mapper.CoffeeDrinkMapper
-import com.alexzh.coffeedrinks.api.api.coffeedrinks.model.CoffeeDrinkWithFavourite
-import com.alexzh.coffeedrinks.api.api.coffeedrinks.model.CoffeeDrinkWithoutFavourite
+import com.alexzh.coffeedrinks.api.api.coffeedrinks.model.CoffeeDrinkWithFavouriteResponse
+import com.alexzh.coffeedrinks.api.api.coffeedrinks.model.CoffeeDrinkWithoutFavouriteResponse
 import com.alexzh.coffeedrinks.api.data.model.CoffeeDrink
 import com.alexzh.coffeedrinks.api.generators.CoffeeDrinkGenerator.generateCoffeeDrink
 import org.junit.Test
@@ -34,25 +34,25 @@ class CoffeeDrinkMapperTest {
     }
 
     private fun assertCoffeeDrinks(
-        coffeeDrink: CoffeeDrink,
-        coffeeDrinkWithFavourite: CoffeeDrinkWithFavourite
+            coffeeDrink: CoffeeDrink,
+            coffeeDrinkWithFavouriteResponse: CoffeeDrinkWithFavouriteResponse
     ) {
-        assertEquals(coffeeDrink.id, coffeeDrinkWithFavourite.id)
-        assertEquals(coffeeDrink.name, coffeeDrinkWithFavourite.name)
-        assertEquals(coffeeDrink.imageUrl, coffeeDrinkWithFavourite.imageUrl)
-        assertEquals(coffeeDrink.description, coffeeDrinkWithFavourite.description)
-        assertEquals(coffeeDrink.ingredients, coffeeDrinkWithFavourite.ingredients)
-        assertEquals(coffeeDrink.isFavourite, coffeeDrinkWithFavourite.isFavourite)
+        assertEquals(coffeeDrink.id, coffeeDrinkWithFavouriteResponse.id)
+        assertEquals(coffeeDrink.name, coffeeDrinkWithFavouriteResponse.name)
+        assertEquals(coffeeDrink.imageUrl, coffeeDrinkWithFavouriteResponse.imageUrl)
+        assertEquals(coffeeDrink.description, coffeeDrinkWithFavouriteResponse.description)
+        assertEquals(coffeeDrink.ingredients, coffeeDrinkWithFavouriteResponse.ingredients)
+        assertEquals(coffeeDrink.isFavourite, coffeeDrinkWithFavouriteResponse.isFavourite)
     }
 
     private fun assertCoffeeDrinks(
-        coffeeDrink: CoffeeDrink,
-        coffeeDrinkWithoutFavourite: CoffeeDrinkWithoutFavourite
+            coffeeDrink: CoffeeDrink,
+            coffeeDrinkWithoutFavouriteResponse: CoffeeDrinkWithoutFavouriteResponse
     ) {
-        assertEquals(coffeeDrink.id, coffeeDrinkWithoutFavourite.id)
-        assertEquals(coffeeDrink.name, coffeeDrinkWithoutFavourite.name)
-        assertEquals(coffeeDrink.imageUrl, coffeeDrinkWithoutFavourite.imageUrl)
-        assertEquals(coffeeDrink.description, coffeeDrinkWithoutFavourite.description)
-        assertEquals(coffeeDrink.ingredients, coffeeDrinkWithoutFavourite.ingredients)
+        assertEquals(coffeeDrink.id, coffeeDrinkWithoutFavouriteResponse.id)
+        assertEquals(coffeeDrink.name, coffeeDrinkWithoutFavouriteResponse.name)
+        assertEquals(coffeeDrink.imageUrl, coffeeDrinkWithoutFavouriteResponse.imageUrl)
+        assertEquals(coffeeDrink.description, coffeeDrinkWithoutFavouriteResponse.description)
+        assertEquals(coffeeDrink.ingredients, coffeeDrinkWithoutFavouriteResponse.ingredients)
     }
 }

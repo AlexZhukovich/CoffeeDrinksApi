@@ -2,7 +2,7 @@ package com.alexzh.coffeedrinks.api.coffeedrinks
 
 import api.coffeedrinks.mapper.CoffeeDrinkMapper
 import com.alexzh.coffeedrinks.api.addAuthHeader
-import com.alexzh.coffeedrinks.api.api.coffeedrinks.model.CoffeeDrinkWithoutFavourite
+import com.alexzh.coffeedrinks.api.api.coffeedrinks.model.CoffeeDrinkWithoutFavouriteResponse
 import com.alexzh.coffeedrinks.api.data.model.CoffeeDrink
 import com.alexzh.coffeedrinks.api.generators.CoffeeDrinkGenerator.generateCoffeeDrink
 import com.alexzh.coffeedrinks.api.generators.CoffeeDrinkGenerator.generateCoffeeDrinksByFavourites
@@ -60,7 +60,7 @@ class CoffeeDrinksApiTest {
     @Test
     fun `should return empty list when database have no data executed`() {
         val coffeeDrinks = emptyList<CoffeeDrink>()
-        val expectedResponse = successResponse(emptyList<CoffeeDrinkWithoutFavourite>())
+        val expectedResponse = successResponse(emptyList<CoffeeDrinkWithoutFavouriteResponse>())
 
         launchMockAppWithRealMappers(
             beforeTest = {
