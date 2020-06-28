@@ -40,13 +40,6 @@ class MySQLUserRepository : UserRepository {
         }
     }
 
-    override suspend fun getUsers(): List<User> {
-        return dbQuery {
-            UserTable.selectAll()
-                    .map { toUser(it) }
-        }
-    }
-
     private fun toUser(row: ResultRow): User {
         return User(
                 id = row[UserTable.id],

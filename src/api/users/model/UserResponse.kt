@@ -1,4 +1,4 @@
-package com.alexzh.coffeedrinks.api.api.response
+package com.alexzh.coffeedrinks.api.api.users.model
 
 data class UserResponse(
     val id: Long,

@@ -1,7 +1,6 @@
-package com.alexzh.coffeedrinks.api.testframework
+package com.alexzh.coffeedrinks.testframework
 
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.TestApplicationResponse
 
 data class TestResponse<T>(
     val statusCode: HttpStatusCode,

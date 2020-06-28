@@ -1,4 +1,4 @@
-package com.alexzh.coffeedrinks.api.testframework
+package com.alexzh.coffeedrinks.testframework
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

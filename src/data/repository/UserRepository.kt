@@ -9,7 +9,4 @@ interface UserRepository {
     suspend fun getUserById(id: Long): User?
 
     suspend fun getUserByEmail(email: String): User?
-
-    // TODO: delete
-    suspend fun getUsers(): List<User>
 }

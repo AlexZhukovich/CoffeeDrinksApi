@@ -4,7 +4,7 @@ import api.coffeedrinks.mapper.CoffeeDrinkMapper
 import com.alexzh.coffeedrinks.api.api.coffeedrinks.model.CoffeeDrinkWithFavouriteResponse
 import com.alexzh.coffeedrinks.api.api.coffeedrinks.model.CoffeeDrinkWithoutFavouriteResponse
 import com.alexzh.coffeedrinks.api.data.model.CoffeeDrink
-import com.alexzh.coffeedrinks.api.generators.CoffeeDrinkGenerator.generateCoffeeDrink
+import com.alexzh.coffeedrinks.generators.CoffeeDrinkGenerator.generateCoffeeDrink
 import org.junit.Test
 import kotlin.test.assertEquals
 

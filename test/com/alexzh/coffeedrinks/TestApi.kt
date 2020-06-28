@@ -1,13 +1,20 @@
-package com.alexzh.coffeedrinks.api
+package com.alexzh.coffeedrinks
 
 import api.coffeedrinks.mapper.CoffeeDrinkMapper
+import com.alexzh.coffeedrinks.api.api.users.mapper.UserResponseMapper
 import com.alexzh.coffeedrinks.api.auth.JwtService
 import com.alexzh.coffeedrinks.api.data.database.DatabaseConnector
 import com.alexzh.coffeedrinks.api.data.model.User
 import com.alexzh.coffeedrinks.api.data.repository.CoffeeDrinkRepository
 import com.alexzh.coffeedrinks.api.data.repository.UserRepository
-import com.alexzh.coffeedrinks.api.testframework.mockconfig.MockConfigurator
+import com.alexzh.coffeedrinks.api.moduleWithDependencies
+import com.alexzh.coffeedrinks.testframework.mockconfig.MockConfigurator
 import io.ktor.config.MapApplicationConfig
+import io.ktor.http.ContentDisposition
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.content.PartData
+import io.ktor.http.headersOf
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.TestApplicationRequest
@@ -24,22 +31,24 @@ private const val HASH_KEY_ENV_KEY = "12345678"
 fun <R> launchMockAppWithRealMappers(
     databaseConnector: DatabaseConnector = mockk(relaxed = true),
     coffeeDrinkRepository: CoffeeDrinkRepository = mockk(relaxed = true),
-    userRepository: UserRepository = mockk(relaxed = true),
     coffeeDrinkMapper: CoffeeDrinkMapper = CoffeeDrinkMapper(),
+    userRepository: UserRepository = mockk(relaxed = true),
+    usersMapper: UserResponseMapper = UserResponseMapper(),
     jwtService: JwtService = mockk(relaxed = true),
     hashFunction: (String) -> String = mockk(relaxed = true),
     beforeTest: MockConfigurator.() -> Unit = { },
     test: TestApplicationEngine.() -> R
 ) {
     return launchMockApp(
-        databaseConnector,
-        coffeeDrinkRepository,
-        userRepository,
-        coffeeDrinkMapper,
-        jwtService,
-        hashFunction,
-        beforeTest,
-        test
+            databaseConnector,
+            coffeeDrinkRepository,
+            coffeeDrinkMapper,
+            userRepository,
+            usersMapper,
+            jwtService,
+            hashFunction,
+            beforeTest,
+            test
     )
 }
 
@@ -48,8 +57,9 @@ fun <R> launchMockAppWithRealMappers(
 fun <R> launchMockApp(
     databaseConnector: DatabaseConnector = mockk(relaxed = true),
     coffeeDrinkRepository: CoffeeDrinkRepository = mockk(relaxed = true),
-    userRepository: UserRepository = mockk(relaxed = true),
     coffeeDrinkMapper: CoffeeDrinkMapper = mockk(relaxed = true),
+    userRepository: UserRepository = mockk(relaxed = true),
+    usersMapper: UserResponseMapper = mockk(relaxed = true),
     jwtService: JwtService = mockk(relaxed = true),
     hashFunction: (String) -> String = mockk(relaxed = true),
     beforeTest: MockConfigurator.() -> Unit = { },
@@ -58,8 +68,9 @@ fun <R> launchMockApp(
     val appConfig = MockConfigurator(
             databaseConnector,
             coffeeDrinkRepository,
-            userRepository,
             coffeeDrinkMapper,
+            userRepository,
+            usersMapper,
             jwtService,
             hashFunction,
             JWT_ISSUER_ENV_KEY,
@@ -74,8 +85,9 @@ fun <R> launchMockApp(
         moduleWithDependencies(
                 appConfig.databaseConnector,
                 appConfig.coffeeDrinkRepository,
-                appConfig.userRepository,
                 appConfig.coffeeDrinkMapper,
+                appConfig.userRepository,
+                appConfig.userMapper,
                 appConfig.jwtService,
                 appConfig.hashFunction
         )
@@ -94,3 +106,24 @@ fun TestApplicationRequest.addAuthHeader(
     "Authorization",
     "Bearer ${JwtService(testAppEngine.environment.config.config("api")).generateToken(user)}"
 )
+
+fun TestApplicationRequest.addFormParamHeader(
+    boundary: String
+) = addHeader(
+    HttpHeaders.ContentType,
+    ContentType.MultiPart.FormData.withParameter("boundary", boundary).toString()
+)
+
+// TODO: extract to separate file
+fun formItem(key: String, value: String): PartData.FormItem {
+    return PartData.FormItem(
+        value,
+        { },
+        headersOf(
+            HttpHeaders.ContentDisposition,
+            ContentDisposition.Inline
+                .withParameter(ContentDisposition.Parameters.Name, key)
+                .toString()
+        )
+    )
+}

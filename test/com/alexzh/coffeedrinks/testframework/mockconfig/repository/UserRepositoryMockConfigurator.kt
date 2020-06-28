@@ -1,4 +1,4 @@
-package com.alexzh.coffeedrinks.api.testframework.mockconfig.repository
+package com.alexzh.coffeedrinks.testframework.mockconfig.repository
 
 import com.alexzh.coffeedrinks.api.data.model.User
 import com.alexzh.coffeedrinks.api.data.repository.UserRepository
@@ -12,5 +12,16 @@ class UserRepositoryMockConfigurator(
             user: User
     ) {
         coEvery { userRepository.getUserById(userId) } returns user
+    }
+
+    fun stubCreateUser(
+        user: User,
+        error: Throwable? = null
+    ) {
+        if (error != null) {
+            coEvery { userRepository.createUser(eq(user)) } throws error
+        } else {
+            coEvery { userRepository.createUser(eq(user)) } returns user
+        }
     }
 }

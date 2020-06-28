@@ -1,4 +1,4 @@
-package com.alexzh.coffeedrinks.api.testframework.mockconfig.repository
+package com.alexzh.coffeedrinks.testframework.mockconfig.repository
 
 import com.alexzh.coffeedrinks.api.data.model.CoffeeDrink
 import com.alexzh.coffeedrinks.api.data.repository.CoffeeDrinkRepository

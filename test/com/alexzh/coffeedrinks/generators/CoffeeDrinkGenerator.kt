@@ -1,9 +1,9 @@
-package com.alexzh.coffeedrinks.api.generators
+package com.alexzh.coffeedrinks.generators
 
 import com.alexzh.coffeedrinks.api.data.model.CoffeeDrink
-import com.alexzh.coffeedrinks.api.generators.RandomValuesGenerator.randomBoolean
-import com.alexzh.coffeedrinks.api.generators.RandomValuesGenerator.randomLong
-import com.alexzh.coffeedrinks.api.generators.RandomValuesGenerator.randomString
+import com.alexzh.coffeedrinks.generators.RandomValuesGenerator.randomBoolean
+import com.alexzh.coffeedrinks.generators.RandomValuesGenerator.randomLong
+import com.alexzh.coffeedrinks.generators.RandomValuesGenerator.randomString
 
 object CoffeeDrinkGenerator {
 

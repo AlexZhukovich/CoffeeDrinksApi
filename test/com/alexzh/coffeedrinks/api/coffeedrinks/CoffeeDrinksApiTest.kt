@@ -1,14 +1,14 @@
 package com.alexzh.coffeedrinks.api.coffeedrinks
 
 import api.coffeedrinks.mapper.CoffeeDrinkMapper
-import com.alexzh.coffeedrinks.api.addAuthHeader
+import com.alexzh.coffeedrinks.addAuthHeader
 import com.alexzh.coffeedrinks.api.api.coffeedrinks.model.CoffeeDrinkWithoutFavouriteResponse
 import com.alexzh.coffeedrinks.api.data.model.CoffeeDrink
-import com.alexzh.coffeedrinks.api.generators.CoffeeDrinkGenerator.generateCoffeeDrink
-import com.alexzh.coffeedrinks.api.generators.CoffeeDrinkGenerator.generateCoffeeDrinksByFavourites
-import com.alexzh.coffeedrinks.api.generators.UserGenerator.generateUser
-import com.alexzh.coffeedrinks.api.launchMockAppWithRealMappers
-import com.alexzh.coffeedrinks.api.testframework.*
+import com.alexzh.coffeedrinks.generators.CoffeeDrinkGenerator.generateCoffeeDrink
+import com.alexzh.coffeedrinks.generators.CoffeeDrinkGenerator.generateCoffeeDrinksByFavourites
+import com.alexzh.coffeedrinks.generators.UserGenerator.generateUser
+import com.alexzh.coffeedrinks.launchMockAppWithRealMappers
+import com.alexzh.coffeedrinks.testframework.*
 import io.ktor.http.HttpMethod
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.server.testing.handleRequest
@@ -26,9 +26,9 @@ class CoffeeDrinksApiTest {
         val expectedResponse = successResponse(coffeeDrinks.map { mapper.mapToCoffeeDrinkWithoutFavourite(it) })
 
         launchMockAppWithRealMappers(
-            beforeTest = {
-                coffeeDrinkRepository { stubGetCoffeeDrinks(coffeeDrinks) }
-            }
+                beforeTest = {
+                    coffeeDrinkRepository { stubGetCoffeeDrinks(coffeeDrinks) }
+                }
         ) {
             handleRequest(HttpMethod.Get, "/api/v1/coffee-drinks").apply {
                 assertResponse(expectedResponse, response.toTestResponseOfList())
@@ -43,11 +43,11 @@ class CoffeeDrinksApiTest {
         val expectedResponse = successResponse(coffeeDrinks.map { mapper.mapToCoffeeDrinkWithFavourite(it) })
 
         launchMockAppWithRealMappers(
-            beforeTest = {
-                jwtService { stubAuthJwtVerifier() }
-                userRepository { stubGetUserById(user.id, user) }
-                coffeeDrinkRepository { stubGetCoffeeDrinksById(user.id, coffeeDrinks) }
-            }
+                beforeTest = {
+                    jwtService { stubAuthJwtVerifier() }
+                    userRepository { stubGetUserById(user.id, user) }
+                    coffeeDrinkRepository { stubGetCoffeeDrinksById(user.id, coffeeDrinks) }
+                }
         ) {
             handleRequest(HttpMethod.Get, "/api/v1/coffee-drinks") {
                 addAuthHeader(this@launchMockAppWithRealMappers, user)
@@ -63,9 +63,9 @@ class CoffeeDrinksApiTest {
         val expectedResponse = successResponse(emptyList<CoffeeDrinkWithoutFavouriteResponse>())
 
         launchMockAppWithRealMappers(
-            beforeTest = {
-                coffeeDrinkRepository { stubGetCoffeeDrinks(coffeeDrinks) }
-            }
+                beforeTest = {
+                    coffeeDrinkRepository { stubGetCoffeeDrinks(coffeeDrinks) }
+                }
         ) {
             handleRequest(HttpMethod.Get, "/api/v1/coffee-drinks").apply {
                 assertResponse(expectedResponse, response.toTestResponse())
@@ -80,9 +80,9 @@ class CoffeeDrinksApiTest {
         val expectedResponse = successResponse(expectedCoffeeDrinkWithoutFavourite)
 
         launchMockAppWithRealMappers(
-            beforeTest = {
-                coffeeDrinkRepository { stubGetCoffeeDrinkById(coffeeDrink.id, coffeeDrink) }
-            }
+                beforeTest = {
+                    coffeeDrinkRepository { stubGetCoffeeDrinkById(coffeeDrink.id, coffeeDrink) }
+                }
         ) {
             handleRequest(HttpMethod.Get, "/api/v1/coffee-drinks/${coffeeDrink.id}").apply {
                 assertResponse(expectedResponse, response.toTestResponse())
@@ -98,11 +98,11 @@ class CoffeeDrinksApiTest {
         val expectedResponse = successResponse(expectedCoffeeDrinkWithFavourite)
 
         launchMockAppWithRealMappers(
-            beforeTest = {
-                jwtService { stubAuthJwtVerifier() }
-                userRepository { stubGetUserById(user.id, user) }
-                coffeeDrinkRepository {stubGetCoffeeDrinkById(coffeeDrink.id, coffeeDrink) }
-            }
+                beforeTest = {
+                    jwtService { stubAuthJwtVerifier() }
+                    userRepository { stubGetUserById(user.id, user) }
+                    coffeeDrinkRepository { stubGetCoffeeDrinkById(coffeeDrink.id, coffeeDrink) }
+                }
         ) {
             handleRequest(HttpMethod.Get, "/api/v1/coffee-drinks/${coffeeDrink.id}") {
                 addAuthHeader(this@launchMockAppWithRealMappers, user)
@@ -118,9 +118,9 @@ class CoffeeDrinksApiTest {
         val expectedResponse = noContentResponse()
 
         launchMockAppWithRealMappers(
-            beforeTest = {
-                coffeeDrinkRepository { stubGetCoffeeDrinkById(id, null) }
-            }
+                beforeTest = {
+                    coffeeDrinkRepository { stubGetCoffeeDrinkById(id, null) }
+                }
         ) {
             handleRequest(HttpMethod.Get, "/api/v1/coffee-drinks/$id").apply {
                 assertStatusCodeOfResponse(expectedResponse, response)

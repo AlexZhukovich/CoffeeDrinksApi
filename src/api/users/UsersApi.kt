@@ -1,8 +1,10 @@
-package com.alexzh.coffeedrinks.api.api
+package com.alexzh.coffeedrinks.api.api.users
 
 import com.alexzh.coffeedrinks.api.API_VERSION
-import com.alexzh.coffeedrinks.api.api.response.UserResponse
+import com.alexzh.coffeedrinks.api.api.AppSession
+import com.alexzh.coffeedrinks.api.api.users.mapper.UserResponseMapper
 import com.alexzh.coffeedrinks.api.auth.JwtService
+import com.alexzh.coffeedrinks.api.data.exception.UserAlreadyExistException
 import com.alexzh.coffeedrinks.api.data.model.User
 import com.alexzh.coffeedrinks.api.data.repository.UserRepository
 import io.ktor.application.application
@@ -24,6 +26,10 @@ import io.ktor.sessions.sessions
 import io.ktor.sessions.set
 import io.ktor.util.KtorExperimentalAPI
 
+const val MIN_EMAIL_LENGTH = 4
+const val MIN_USERNAME_LENGTH = 4
+const val MIN_PASSWORD_LENGTH = 3
+
 const val LOGIN_ENDPOINT = "$API_VERSION/login"
 const val LOGOUT_ENDPOINT = "$API_VERSION/logout"
 const val USERS_ENDPOINT = "$API_VERSION/users"
@@ -40,9 +46,6 @@ object UsersApi {
     @Location(LOGOUT_ENDPOINT)
     class LogoutUser
 
-    @Location(USERS_ENDPOINT)
-    class AllUsers
-
     @Location(USER_BY_ID_ENDPOINT)
     class UserById(val id: Long)
 }
@@ -51,30 +54,69 @@ object UsersApi {
 @KtorExperimentalLocationsAPI
 fun Route.users(
     userRepository: UserRepository,
+    userResponseMapper: UserResponseMapper,
     jwtService: JwtService,
     hasFunction: (String) -> String
 ) {
     post<UsersApi.CreateUser> {
         val params = call.receive<Parameters>()
         val name = params["name"]
-                ?: return@post call.respond(HttpStatusCode.Unauthorized, "Missing fields")
+                ?: return@post call.respond(HttpStatusCode.InternalServerError, "Missing name field")
         val email = params["email"]
-                ?: return@post call.respond(HttpStatusCode.Unauthorized, "Missing fields")
+                ?: return@post call.respond(HttpStatusCode.InternalServerError, "Missing email field")
         val password = params["password"]
-                ?: return@post call.respond(HttpStatusCode.Unauthorized, "Missing fields")
+                ?: return@post call.respond(HttpStatusCode.InternalServerError, "Missing password field")
         val hashedPassword = hasFunction(password)
 
-        try {
-            val user = userRepository.createUser(
-                    User(name = name, email = email, passwordHash = hashedPassword)
-            )
-            user?.id?.let {
-                call.sessions.set(AppSession(it))
-                call.respondText(text = jwtService.generateToken(user), status = HttpStatusCode.Created)
+        when {
+            email.length < MIN_EMAIL_LENGTH ->
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    "Email should be at least $MIN_EMAIL_LENGTH characters long"
+                )
+            !isEmailValid(email) ->
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    "Email value should be in [test]@[test].[test] format"
+                )
+            name.length < MIN_USERNAME_LENGTH ->
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    "Username should be at least $MIN_USERNAME_LENGTH characters long"
+                )
+            !isUserNameValid(name) ->
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    "Username should consist of digits, letters, dots or underscores"
+                )
+            password.length < MIN_PASSWORD_LENGTH ->
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    "Password should be at least $MIN_PASSWORD_LENGTH characters long"
+                )
+            else -> {
+                try {
+                    val user = userRepository.createUser(
+                            User(name = name, email = email, passwordHash = hashedPassword)
+                    )
+                    user?.id?.let {
+                        call.sessions.set(AppSession(it))
+                        call.respondText(text = jwtService.generateToken(user), status = HttpStatusCode.Created)
+                    }
+                } catch (ex: UserAlreadyExistException) {
+                    application.log.error("User already exist", ex)
+                    call.respond(
+                            HttpStatusCode.InternalServerError,
+                            "User with the following username already exist"
+                    )
+                } catch (ex: Throwable) {
+                    application.log.error("Failed to create a user", ex)
+                    call.respond(
+                            HttpStatusCode.InternalServerError,
+                            "Failed to register user"
+                    )
+                }
             }
-        } catch (ex: Throwable) {
-            application.log.error("Failed to create a user", ex)
-            call.respond(HttpStatusCode.BadRequest, "Problem with creating user")
         }
     }
     post<UsersApi.LoginUser> {
@@ -105,28 +147,9 @@ fun Route.users(
         get<UsersApi.UserById> { userId ->
             val user = userRepository.getUserById(userId.id)
             if (user != null) {
-                call.respond(UserResponse(user.id, user.name, user.email))
+                call.respond(userResponseMapper.mapToResponse(user))
             } else {
                 call.respond(HttpStatusCode.NoContent)
-            }
-        }
-        // TODO: delete UsersApi.AllUsers and get request
-        get<UsersApi.AllUsers> {
-            val user = call.principal<User>()
-
-            if (user == null) {
-                call.respond(HttpStatusCode.BadRequest, "Problems retrieving user")
-                return@get
-            } else {
-                try {
-                    call.respond(
-                            userRepository.getUsers()
-                                    .map { UserResponse(it.id, it.name, it.email) }
-                    )
-                } catch (ex: Throwable) {
-                    application.log.error("Failed to load all users", ex)
-                    call.respond(HttpStatusCode.BadRequest, "Problems retrieving user")
-                }
             }
         }
         post<UsersApi.LogoutUser> {
@@ -139,4 +162,14 @@ fun Route.users(
             }
         }
     }
+}
+
+private fun isUserNameValid(username: String): Boolean {
+    val pattern = "[a-zA-Z0-9_.]+".toRegex()
+    return username.matches(pattern)
+}
+
+private fun isEmailValid(email: String): Boolean {
+    val pattern = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$".toRegex()
+    return email.matches(pattern)
 }

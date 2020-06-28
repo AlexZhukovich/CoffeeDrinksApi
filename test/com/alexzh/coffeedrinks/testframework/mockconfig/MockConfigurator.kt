@@ -1,21 +1,23 @@
-package com.alexzh.coffeedrinks.api.testframework.mockconfig
+package com.alexzh.coffeedrinks.testframework.mockconfig
 
 import api.coffeedrinks.mapper.CoffeeDrinkMapper
+import com.alexzh.coffeedrinks.api.api.users.mapper.UserResponseMapper
 import com.alexzh.coffeedrinks.api.auth.JwtService
 import com.alexzh.coffeedrinks.api.data.database.DatabaseConnector
 import com.alexzh.coffeedrinks.api.data.repository.CoffeeDrinkRepository
 import com.alexzh.coffeedrinks.api.data.repository.UserRepository
-import com.alexzh.coffeedrinks.api.testframework.mockconfig.repository.CoffeeDrinkRepositoryMockConfigurator
-import com.alexzh.coffeedrinks.api.testframework.mockconfig.repository.UserRepositoryMockConfigurator
-import com.alexzh.coffeedrinks.api.testframework.mockconfig.service.JwtServiceMockConfigurator
+import com.alexzh.coffeedrinks.testframework.mockconfig.repository.CoffeeDrinkRepositoryMockConfigurator
+import com.alexzh.coffeedrinks.testframework.mockconfig.repository.UserRepositoryMockConfigurator
+import com.alexzh.coffeedrinks.testframework.mockconfig.service.JwtServiceMockConfigurator
 import io.ktor.util.KtorExperimentalAPI
 
 @KtorExperimentalAPI
 class MockConfigurator(
         val databaseConnector: DatabaseConnector,
         val coffeeDrinkRepository: CoffeeDrinkRepository,
-        val userRepository: UserRepository,
         val coffeeDrinkMapper: CoffeeDrinkMapper,
+        val userRepository: UserRepository,
+        val userMapper: UserResponseMapper,
         val jwtService: JwtService,
         val hashFunction: (String) -> String,
         private val jwtIssuer: String,

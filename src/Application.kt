@@ -1,15 +1,15 @@
 package com.alexzh.coffeedrinks.api
 
+import api.coffeedrinks.mapper.CoffeeDrinkMapper
 import com.alexzh.coffeedrinks.api.api.AppSession
 import com.alexzh.coffeedrinks.api.api.coffeedrinks.coffeeDrinks
-import api.coffeedrinks.mapper.CoffeeDrinkMapper
-import com.alexzh.coffeedrinks.api.api.users
+import com.alexzh.coffeedrinks.api.api.users.mapper.UserResponseMapper
+import com.alexzh.coffeedrinks.api.api.users.users
 import com.alexzh.coffeedrinks.api.auth.JwtService
 import com.alexzh.coffeedrinks.api.auth.hash
 import com.alexzh.coffeedrinks.api.auth.hashKey
 import com.alexzh.coffeedrinks.api.data.database.DatabaseConnector
 import com.alexzh.coffeedrinks.api.data.database.MySQLDatabaseConnector
-import com.alexzh.coffeedrinks.api.data.model.User
 import com.alexzh.coffeedrinks.api.data.repository.CoffeeDrinkRepository
 import com.alexzh.coffeedrinks.api.data.repository.MySQLCoffeeDrinkRepository
 import com.alexzh.coffeedrinks.api.data.repository.MySQLUserRepository
@@ -20,7 +20,6 @@ import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.jwt.jwt
-import io.ktor.auth.principal
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.features.StatusPages
@@ -53,6 +52,7 @@ fun Application.module(testing: Boolean = false) {
     val coffeeDrinksRepository = MySQLCoffeeDrinkRepository()
     val userRepository = MySQLUserRepository()
     val coffeeDrinkMapper = CoffeeDrinkMapper()
+    val userResponseMapper = UserResponseMapper()
     val jwtService = JwtService(apiConfig)
 
     val hashFunction = { s: String -> hash(environment, s)}
@@ -60,8 +60,9 @@ fun Application.module(testing: Boolean = false) {
     moduleWithDependencies(
         databaseConnector,
         coffeeDrinksRepository,
-        userRepository,
         coffeeDrinkMapper,
+        userRepository,
+        userResponseMapper,
         jwtService,
         hashFunction
     )
@@ -72,8 +73,9 @@ fun Application.module(testing: Boolean = false) {
 fun Application.moduleWithDependencies(
         databaseConnector: DatabaseConnector,
         coffeeDrinkRepository: CoffeeDrinkRepository,
-        userRepository: UserRepository,
         coffeeDrinkMapper: CoffeeDrinkMapper,
+        userRepository: UserRepository,
+        userMapper: UserResponseMapper,
         jwtService: JwtService,
         hashFunction: (String) -> String
 ) {
@@ -114,7 +116,7 @@ fun Application.moduleWithDependencies(
 
     routing {
         coffeeDrinks(coffeeDrinkRepository, coffeeDrinkMapper)
-        users(userRepository, jwtService, hashFunction)
+        users(userRepository, userMapper, jwtService, hashFunction)
     }
 }
 
