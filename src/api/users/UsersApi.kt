@@ -123,9 +123,9 @@ fun Route.users(
         val params = call.receive<Parameters>()
 
         val email = params["email"]
-                ?: return@post call.respond(HttpStatusCode.Unauthorized, "Missing fields")
+                ?: return@post call.respond(HttpStatusCode.InternalServerError, "Missing email field")
         val password = params["password"]
-                ?: return@post call.respond(HttpStatusCode.Unauthorized, "Missing fields")
+                ?: return@post call.respond(HttpStatusCode.InternalServerError, "Missing password field")
         val hashedPassword = hasFunction(password)
 
         try {
@@ -139,8 +139,8 @@ fun Route.users(
                 }
             }
         } catch (ex: Throwable) {
-            application.log.error("Failed to register user", ex)
-            call.respond(HttpStatusCode.BadRequest, "Problem retrieving user")
+            application.log.error("Problem retrieving user", ex)
+            call.respond(HttpStatusCode.InternalServerError, "Problem retrieving user")
         }
     }
     authenticate("jwt", optional = true) {

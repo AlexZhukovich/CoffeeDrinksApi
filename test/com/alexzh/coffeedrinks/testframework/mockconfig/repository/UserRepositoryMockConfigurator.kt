@@ -24,4 +24,16 @@ class UserRepositoryMockConfigurator(
             coEvery { userRepository.createUser(eq(user)) } returns user
         }
     }
+
+    fun stubGetUserByEmail(
+        email: String,
+        user: User? = null,
+        error: Throwable? = null
+    ) {
+        if (error != null) {
+            coEvery { userRepository.getUserByEmail(email) } throws error
+        } else {
+            coEvery { userRepository.getUserByEmail(email) } returns user
+        }
+    }
 }
