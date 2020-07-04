@@ -145,11 +145,17 @@ fun Route.users(
     }
     authenticate("jwt", optional = true) {
         get<UsersApi.UserById> { userId ->
-            val user = userRepository.getUserById(userId.id)
-            if (user != null) {
-                call.respond(userResponseMapper.mapToResponse(user))
-            } else {
-                call.respond(HttpStatusCode.NoContent)
+            val user = call.principal<User>()
+            when {
+                user == null -> {
+                    call.respond(HttpStatusCode.BadRequest, "User should logged in")
+                }
+                user.id == userId.id -> {
+                    call.respond(userResponseMapper.mapToResponse(user))
+                }
+                else -> {
+                    call.respond(HttpStatusCode.BadRequest, "Problem retrieving active user information")
+                }
             }
         }
         post<UsersApi.LogoutUser> {
