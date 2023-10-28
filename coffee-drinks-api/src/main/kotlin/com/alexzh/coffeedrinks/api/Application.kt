@@ -2,7 +2,6 @@ package com.alexzh.coffeedrinks.api
 
 import com.alexzh.coffeedrinks.api.data.db.DatabaseConnector
 import com.alexzh.coffeedrinks.api.plugins.*
-import com.alexzh.coffeedrinks.api.plugins.configureSecurity
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -16,7 +15,7 @@ fun main() {
 fun Application.module() {
     configureDependencyInjection()
     configureStatusPages()
-    configureSecurity()
+    configureAuthentication()
     configureHTTP()
     configureRouting()
     configureContentNegotiation()

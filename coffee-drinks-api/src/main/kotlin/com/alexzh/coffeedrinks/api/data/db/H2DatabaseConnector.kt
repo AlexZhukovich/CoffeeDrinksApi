@@ -1,6 +1,7 @@
 package com.alexzh.coffeedrinks.api.data.db
 
 import com.alexzh.coffeedrinks.api.data.db.table.CoffeeDrinksTable
+import com.alexzh.coffeedrinks.api.data.db.table.UsersTable
 import com.alexzh.coffeedrinks.api.data.predefinedCoffeeDrinks
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -13,7 +14,10 @@ class H2DatabaseConnector : DatabaseConnector {
     override fun connect(): Database {
         return Database.connect(hikari()).apply {
             transaction {
-                SchemaUtils.create(CoffeeDrinksTable)
+                SchemaUtils.create(
+                    CoffeeDrinksTable,
+                    UsersTable
+                )
 
                 predefinedCoffeeDrinks().forEach { dataToInsert ->
                     CoffeeDrinksTable.insert(dataToInsert)
