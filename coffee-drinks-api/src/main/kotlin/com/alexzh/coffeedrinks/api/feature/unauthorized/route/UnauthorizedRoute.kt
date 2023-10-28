@@ -1,6 +1,6 @@
 package com.alexzh.coffeedrinks.api.feature.unauthorized.route
 
-import com.alexzh.coffeedrinks.api.feature.unauthorized.model.Unauthorized
+import com.alexzh.coffeedrinks.api.feature.unauthorized.model.endpoint.Unauthorized
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.locations.*
