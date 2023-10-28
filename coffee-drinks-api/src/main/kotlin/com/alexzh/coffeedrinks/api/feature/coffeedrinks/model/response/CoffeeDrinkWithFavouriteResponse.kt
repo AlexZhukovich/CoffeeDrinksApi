@@ -1,4 +1,4 @@
-package com.alexzh.coffeedrinks.api.response
+package com.alexzh.coffeedrinks.api.feature.coffeedrinks.model.response
 
 @kotlinx.serialization.Serializable
 data class CoffeeDrinkWithFavouriteResponse(

@@ -1,10 +1,10 @@
-package com.alexzh.coffeedrinks.api.response.mapper
+package com.alexzh.coffeedrinks.api.feature.coffeedrinks.mapper
 
 import com.alexzh.coffeedrinks.api.data.model.CoffeeDrink
-import com.alexzh.coffeedrinks.api.response.CoffeeDrinkWithFavouriteResponse
-import com.alexzh.coffeedrinks.api.response.CoffeeDrinkWithoutFavouriteResponse
+import com.alexzh.coffeedrinks.api.feature.coffeedrinks.model.response.CoffeeDrinkWithFavouriteResponse
+import com.alexzh.coffeedrinks.api.feature.coffeedrinks.model.response.CoffeeDrinkWithoutFavouriteResponse
 
-class CoffeeDrinkMapper {
+class CoffeeDrinkResponseMapper {
 
     fun mapToCoffeeDrinkWithFavourite(
         coffeeDrink: CoffeeDrink
