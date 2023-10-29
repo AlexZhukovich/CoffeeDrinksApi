@@ -12,6 +12,7 @@ import com.alexzh.coffeedrinks.api.feature.auth.encryptor.EncryptorImpl
 import com.alexzh.coffeedrinks.api.feature.auth.service.JwtService
 import com.alexzh.coffeedrinks.api.feature.auth.service.JwtServiceImpl
 import com.alexzh.coffeedrinks.api.feature.coffeedrinks.mapper.CoffeeDrinkResponseMapper
+import com.alexzh.coffeedrinks.api.feature.users.mapper.UserInfoResponseMapper
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -31,6 +32,7 @@ val appModule = module {
     factory<UserRepository> { UserRepositoryImpl() }
 
     factory { CoffeeDrinkResponseMapper() }
+    factory { UserInfoResponseMapper() }
 
     factory {
         AuthController(
