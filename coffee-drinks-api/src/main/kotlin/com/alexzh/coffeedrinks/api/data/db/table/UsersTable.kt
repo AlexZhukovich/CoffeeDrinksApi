@@ -8,5 +8,5 @@ object UsersTable : Table("users") {
     val email = varchar("email", length = 45)
     val password = text("password")
 
-    override val primaryKey =  PrimaryKey(CoffeeDrinksTable.id, name = "PK_User_ID")
+    override val primaryKey =  PrimaryKey(id)
 }

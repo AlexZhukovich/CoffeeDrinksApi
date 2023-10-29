@@ -9,5 +9,5 @@ object CoffeeDrinksTable : Table(name = "coffee_drinks") {
     val description = text("description")
     val ingredients = varchar("ingredients", 256)
 
-    override val primaryKey =  PrimaryKey(id, name = "PK_Coffee_Drink_ID")
+    override val primaryKey =  PrimaryKey(id)
 }
