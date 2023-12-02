@@ -1,6 +1,6 @@
 package com.alexzh.coffeedrinks.api.data.db
 
-import com.alexzh.coffeedrinks.api.data.db.table.CoffeeDrinkFavouriteTable
+import com.alexzh.coffeedrinks.api.data.db.table.CoffeeDrinkFavoriteTable
 import com.alexzh.coffeedrinks.api.data.db.table.CoffeeDrinksTable
 import com.alexzh.coffeedrinks.api.data.db.table.UsersTable
 import com.alexzh.coffeedrinks.api.data.predefinedCoffeeDrinks
@@ -18,7 +18,7 @@ class H2DatabaseConnector : DatabaseConnector {
                 SchemaUtils.create(
                     CoffeeDrinksTable,
                     UsersTable,
-                    CoffeeDrinkFavouriteTable
+                    CoffeeDrinkFavoriteTable
                 )
 
                 predefinedCoffeeDrinks().forEach { dataToInsert ->

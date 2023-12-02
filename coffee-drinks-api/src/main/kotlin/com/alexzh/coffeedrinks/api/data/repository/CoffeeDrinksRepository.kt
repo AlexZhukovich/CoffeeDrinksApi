@@ -15,9 +15,9 @@ interface CoffeeDrinksRepository {
         coffeeDrinkById: Long
     ): CoffeeDrink?
 
-    suspend fun updateFavouriteStateOfCoffeeForUser(
+    suspend fun updateFavoriteStateOfCoffeeForUser(
         userId: Long,
         coffeeDrinkId: Long,
-        isFavourite: Boolean
+        isFavorite: Boolean
     ): Boolean
 }

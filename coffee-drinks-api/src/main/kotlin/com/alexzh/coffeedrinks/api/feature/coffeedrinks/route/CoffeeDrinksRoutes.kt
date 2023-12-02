@@ -4,8 +4,8 @@ import com.alexzh.coffeedrinks.api.data.repository.CoffeeDrinksRepository
 import com.alexzh.coffeedrinks.api.feature.auth.model.UserPrincipal
 import com.alexzh.coffeedrinks.api.feature.coffeedrinks.mapper.CoffeeDrinkResponseMapper
 import com.alexzh.coffeedrinks.api.feature.coffeedrinks.model.endpoint.CoffeeDrinks
-import com.alexzh.coffeedrinks.api.feature.coffeedrinks.model.param.CoffeeDrinkFavouriteRequestParam
-import com.alexzh.coffeedrinks.api.feature.coffeedrinks.model.response.CoffeeDrinkFavouriteResponse
+import com.alexzh.coffeedrinks.api.feature.coffeedrinks.model.param.CoffeeDrinkFavoriteRequestParam
+import com.alexzh.coffeedrinks.api.feature.coffeedrinks.model.response.CoffeeDrinkFavoriteResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -27,12 +27,12 @@ fun Route.coffeeDrinksRoutes(
             if (user == null) {
                 call.respond(
                     coffeeDrinksRepository.getCoffeeDrinks()
-                        .map { mapper.mapToCoffeeDrinkWithoutFavourite(it) }
+                        .map { mapper.mapToCoffeeDrinkWithoutFavorite(it) }
                 )
             } else {
                 call.respond(
                     coffeeDrinksRepository.getCoffeeDrinksByUser(user.user.id)
-                        .map { mapper.mapToCoffeeDrinkWithFavourite(it) }
+                        .map { mapper.mapToCoffeeDrinkWithFavorite(it) }
                 )
             }
         }
@@ -47,9 +47,9 @@ fun Route.coffeeDrinksRoutes(
             if (foundCoffeeDrink != null) {
                 call.respond(
                     if (user == null) {
-                        mapper.mapToCoffeeDrinkWithoutFavourite(foundCoffeeDrink)
+                        mapper.mapToCoffeeDrinkWithoutFavorite(foundCoffeeDrink)
                     } else {
-                        mapper.mapToCoffeeDrinkWithFavourite(foundCoffeeDrink)
+                        mapper.mapToCoffeeDrinkWithFavorite(foundCoffeeDrink)
                     }
                 )
             } else {
@@ -59,14 +59,14 @@ fun Route.coffeeDrinksRoutes(
     }
 
     authenticate("jwt") {
-        patch<CoffeeDrinks.FavouriteCoffeeDrink> {
+        patch<CoffeeDrinks.FavoriteCoffeeDrink> {
             val user = call.principal<UserPrincipal>()
-            val params = runCatching { call.receive<CoffeeDrinkFavouriteRequestParam>() }.getOrElse {
-                throw BadRequestException("The 'isFavourite' parameter is required")
+            val params = runCatching { call.receive<CoffeeDrinkFavoriteRequestParam>() }.getOrElse {
+                throw BadRequestException("The 'isFavorite' parameter is required")
             }
             if (user != null) {
-                call.respond(CoffeeDrinkFavouriteResponse(
-                    coffeeDrinksRepository.updateFavouriteStateOfCoffeeForUser(user.user.id, it.id, params.isFavourite)
+                call.respond(CoffeeDrinkFavoriteResponse(
+                    coffeeDrinksRepository.updateFavoriteStateOfCoffeeForUser(user.user.id, it.id, params.isFavorite)
                 ))
             } else {
                 call.respond(HttpStatusCode.NoContent)

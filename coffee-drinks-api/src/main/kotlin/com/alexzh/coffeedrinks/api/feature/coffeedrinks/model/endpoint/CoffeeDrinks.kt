@@ -13,7 +13,7 @@ object CoffeeDrinks {
     class CoffeeDrinkById(val id: Long)
 
     @Location("${BASE_URL}/coffee-drinks/{id}")
-    class FavouriteCoffeeDrink(
+    class FavoriteCoffeeDrink(
         val id: Long
     )
 }

@@ -7,5 +7,5 @@ data class CoffeeDrink(
     val imageUrl: String,
     val description: String,
     val ingredients: String,
-    val isFavourite: Boolean
+    val isFavorite: Boolean
 )

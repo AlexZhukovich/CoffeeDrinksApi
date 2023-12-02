@@ -1,6 +1,6 @@
 package com.alexzh.coffeedrinks.api.data.repository
 
-import com.alexzh.coffeedrinks.api.data.db.table.CoffeeDrinkFavouriteTable
+import com.alexzh.coffeedrinks.api.data.db.table.CoffeeDrinkFavoriteTable
 import com.alexzh.coffeedrinks.api.data.db.table.CoffeeDrinksTable
 import com.alexzh.coffeedrinks.api.data.model.CoffeeDrink
 import com.alexzh.coffeedrinks.api.data.utils.dbQuery
@@ -19,11 +19,11 @@ class CoffeeDrinksRepositoryImpl : CoffeeDrinksRepository {
     override suspend fun getCoffeeDrinksByUser(userId: Long): List<CoffeeDrink> {
         val complexJoin = Join(
             table = CoffeeDrinksTable,
-            otherTable = CoffeeDrinkFavouriteTable,
+            otherTable = CoffeeDrinkFavoriteTable,
             joinType = JoinType.LEFT,
             onColumn = CoffeeDrinksTable.id,
-            otherColumn = CoffeeDrinkFavouriteTable.coffeeDrinkId,
-            additionalConstraint = { CoffeeDrinkFavouriteTable.userId eq userId}
+            otherColumn = CoffeeDrinkFavoriteTable.coffeeDrinkId,
+            additionalConstraint = { CoffeeDrinkFavoriteTable.userId eq userId}
         )
 
         return dbQuery {
@@ -46,12 +46,12 @@ class CoffeeDrinksRepositoryImpl : CoffeeDrinksRepository {
     ): CoffeeDrink? {
         val complexJoin = Join(
             table = CoffeeDrinksTable,
-            otherTable = CoffeeDrinkFavouriteTable,
+            otherTable = CoffeeDrinkFavoriteTable,
             joinType = JoinType.LEFT,
             onColumn = CoffeeDrinksTable.id,
-            otherColumn = CoffeeDrinkFavouriteTable.coffeeDrinkId,
+            otherColumn = CoffeeDrinkFavoriteTable.coffeeDrinkId,
             additionalConstraint = {
-                CoffeeDrinkFavouriteTable.userId eq userId
+                CoffeeDrinkFavoriteTable.userId eq userId
             }
         )
 
@@ -62,31 +62,31 @@ class CoffeeDrinksRepositoryImpl : CoffeeDrinksRepository {
         }
     }
 
-    override suspend fun updateFavouriteStateOfCoffeeForUser(
+    override suspend fun updateFavoriteStateOfCoffeeForUser(
         userId: Long,
         coffeeDrinkId: Long,
-        isFavourite: Boolean
+        isFavorite: Boolean
     ): Boolean {
         val coffeeDrink = getCoffeeDrinkByUserAndCoffeeDrinkId(userId, coffeeDrinkId)
 
-        if (coffeeDrink?.isFavourite == isFavourite) {
+        if (coffeeDrink?.isFavorite == isFavorite) {
             return false
         }
 
         var updated = false
         if (coffeeDrink != null) {
-            if (coffeeDrink.isFavourite) {
+            if (coffeeDrink.isFavorite) {
                 dbQuery {
-                    updated = CoffeeDrinkFavouriteTable.deleteWhere {
-                        CoffeeDrinkFavouriteTable.userId eq userId
+                    updated = CoffeeDrinkFavoriteTable.deleteWhere {
+                        CoffeeDrinkFavoriteTable.userId eq userId
                     } > 0
                 }
             } else {
                 dbQuery {
-                    updated = CoffeeDrinkFavouriteTable.insert {
-                        it[CoffeeDrinkFavouriteTable.userId] = userId
-                        it[CoffeeDrinkFavouriteTable.coffeeDrinkId] = coffeeDrinkId
-                        it[CoffeeDrinkFavouriteTable.isFavourite] = isFavourite
+                    updated = CoffeeDrinkFavoriteTable.insert {
+                        it[CoffeeDrinkFavoriteTable.userId] = userId
+                        it[CoffeeDrinkFavoriteTable.coffeeDrinkId] = coffeeDrinkId
+                        it[CoffeeDrinkFavoriteTable.isFavorite] = isFavorite
                     }.resultedValues?.first() != null
                 }
             }
@@ -95,10 +95,10 @@ class CoffeeDrinksRepositoryImpl : CoffeeDrinksRepository {
     }
 
     private fun toCoffeeDrink(row: ResultRow): CoffeeDrink {
-        val favouriteValue = if (row.getOrNull(CoffeeDrinkFavouriteTable.isFavourite) == null) {
+        val favoriteValue = if (row.getOrNull(CoffeeDrinkFavoriteTable.isFavorite) == null) {
             false
         } else {
-            row[CoffeeDrinkFavouriteTable.isFavourite]
+            row[CoffeeDrinkFavoriteTable.isFavorite]
         }
 
         return CoffeeDrink(
@@ -107,7 +107,7 @@ class CoffeeDrinksRepositoryImpl : CoffeeDrinksRepository {
             imageUrl = row[CoffeeDrinksTable.imageUrl],
             description = row[CoffeeDrinksTable.description],
             ingredients = row[CoffeeDrinksTable.ingredients],
-            isFavourite = favouriteValue
+            isFavorite = favoriteValue
         )
     }
 }

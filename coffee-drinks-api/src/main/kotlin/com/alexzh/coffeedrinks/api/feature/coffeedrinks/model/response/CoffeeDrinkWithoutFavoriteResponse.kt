@@ -1,7 +1,7 @@
 package com.alexzh.coffeedrinks.api.feature.coffeedrinks.model.response
 
 @kotlinx.serialization.Serializable
-data class CoffeeDrinkWithoutFavouriteResponse(
+data class CoffeeDrinkWithoutFavoriteResponse(
     val id: Long,
     val name: String,
     val imageUrl: String,
