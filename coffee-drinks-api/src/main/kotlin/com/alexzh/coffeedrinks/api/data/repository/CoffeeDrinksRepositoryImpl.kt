@@ -32,9 +32,9 @@ class CoffeeDrinksRepositoryImpl : CoffeeDrinksRepository {
         }
     }
 
-    override suspend fun getCoffeeDrinkById(id: Long): CoffeeDrink? {
+    override suspend fun getCoffeeDrinkById(coffeeDrinkId: Long): CoffeeDrink? {
         return dbQuery {
-            CoffeeDrinksTable.select { CoffeeDrinksTable.id eq id }
+            CoffeeDrinksTable.select { CoffeeDrinksTable.id eq coffeeDrinkId }
                 .mapNotNull { toCoffeeDrink(it) }
                 .singleOrNull()
         }
