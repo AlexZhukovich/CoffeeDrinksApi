@@ -1,6 +1,6 @@
 # Coffee Drinks RESTful API
 
-A RESTful API which provides information about coffee drinks. Users can store information about favorite coffee drinks.
+A RESTful API which provides information about coffee drinks. Users can store information about favorite coffee drinks. The current implementation uses a runtime database.
 
 ## Technologies and tools
 
