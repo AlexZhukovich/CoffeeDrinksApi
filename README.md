@@ -12,7 +12,8 @@ A RESTful API which provides information about coffee drinks. Users can store in
 ## Set Up 
 
 The following environment variables are mandatory:
--`SECRET_KEY`: used for generating the JWT token
+
+- `SECRET_KEY`: used for generating the JWT token
 
 To run the environment variables, you can use the application configuration in Intellij IDEA:
 - Select "Edit Configurations..." from the "Edit" menu
